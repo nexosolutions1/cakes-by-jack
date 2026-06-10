@@ -6,10 +6,10 @@ function publicImageUrl(path) {
   }
   return "";
 }
-async function uploadProductImage(_file) {
-  throw new Error(
-    "Upload local desativado. Para usar imagem, coloque uma URL direta ou ID do Google Drive na coluna Imagem da aba Produtos."
-  );
+async function uploadProductImage(file) {
+  {
+    throw new Error("VITE_GOOGLE_SCRIPT_URL não configurado no Netlify");
+  }
 }
 async function deleteProductImage(_path) {
   return;
