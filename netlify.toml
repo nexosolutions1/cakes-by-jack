@@ -1,6 +1,6 @@
 [build]
-  command = "npm run build && mkdir -p .netlify/dist"
-  publish = ".netlify/dist"
+  command = "npm run build"
+  publish = ".output/public"
 
 [build.environment]
   NODE_VERSION = "20"
