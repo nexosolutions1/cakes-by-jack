@@ -1,17 +1,9 @@
-# Configuração de deploy no Netlify para o sistema Cakes by Jack.
-# Este projeto usa TanStack Start (Vite + SSR via Nitro).
-# Para publicar no Netlify, o preset do Nitro deve ser ajustado em
-# vite.config.ts antes do build:
-#   tanstackStart: { target: "netlify" }
-# Consulte README.md > Publicar no Netlify para o passo-a-passo completo.
-
 [build]
   command = "npm run build"
   publish = ".output/public"
 
 [functions]
   directory = ".output/server"
-  node_bundler = "esbuild"
 
 [build.environment]
   NODE_VERSION = "20"
