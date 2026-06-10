@@ -8,7 +8,7 @@ import { R as Root, P as Portal, C as Content, a as Close, T as Title, D as Desc
 import { P as Provider, R as Root3, T as Trigger, a as Portal$1, C as Content2 } from "../_libs/radix-ui__react-tooltip.mjs";
 import { B as Badge } from "./badge-PNZ8Owsm.mjs";
 import { N as NexoSignature } from "./nexo-signature-6kPfTCBv.mjs";
-import { e as useAuth } from "./router-v0dzu4GX.mjs";
+import { e as useAuth } from "./router-Bf6-tPD-.mjs";
 import { L as LoaderCircle, x as LogOut, y as LayoutDashboard, z as Store, p as ClipboardList, q as CalendarDays, W as Wallet, B as Boxes, F as FileText, G as Settings, h as ChefHat, H as PanelLeft, X } from "../_libs/lucide-react.mjs";
 const MOBILE_BREAKPOINT = 768;
 function useIsMobile() {
