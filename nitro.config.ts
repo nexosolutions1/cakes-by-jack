@@ -2,7 +2,7 @@
 import { defineNitroConfig } from "nitro/config";
 
 export default defineNitroConfig({
-  externals: {
+  rollupConfig: {
     external: [
       "@tanstack/react-router",
       "@tanstack/react-query",
@@ -18,14 +18,14 @@ export default defineNitroConfig({
       "@radix-ui/react-popover",
       "@radix-ui/react-dropdown-menu",
       "@radix-ui/react-collapsible",
-      "@radix-ui/react-menu",
       "@radix-ui/react-portal",
       "@radix-ui/react-presence",
       "@radix-ui/react-focus-scope",
       "@radix-ui/react-focus-guards",
       "@radix-ui/react-dismissable-layer",
       "@radix-ui/react-collection",
-      "@radix-ui/react-direction"
+      "@radix-ui/react-direction",
+      "@radix-ui/react-popper"
     ]
   }
 });
