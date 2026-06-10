@@ -81,7 +81,7 @@ function getResponse() {
 }
 var HEADERS = { TSS_SHELL: "X-TSS_SHELL" };
 async function getStartManifest(matchedRoutes) {
-  const { tsrStartManifest } = await import("../_tanstack-start-manifest_v-CQlPQ5d1.mjs");
+  const { tsrStartManifest } = await import("../_tanstack-start-manifest_v-c0BEL7eg.mjs");
   const startManifest = tsrStartManifest();
   let routes = startManifest.routes;
   routes[rootRouteId];
@@ -103,115 +103,115 @@ async function getStartManifest(matchedRoutes) {
 const manifest = {
   "17ebbafaaa679a189568fd20d67f1940b1e32ede2029204290093c3eda1e892d": {
     functionName: "deleteProduto_createServerFn_handler",
-    importer: () => import("./sheets.functions-BMKY-AOC.mjs")
+    importer: () => import("./sheets.functions-DRHxXot3.mjs")
   },
   "1827d6ee5a2316d4b5c8376d740d5fffe2d07a573d87d7a9bf336a5727da3a28": {
     functionName: "createPedido_createServerFn_handler",
-    importer: () => import("./sheets.functions-BMKY-AOC.mjs")
+    importer: () => import("./sheets.functions-DRHxXot3.mjs")
   },
   "214dca84ef8840793c433690db86b81940040986ff4020423705b650da2328e3": {
     functionName: "listPedidos_createServerFn_handler",
-    importer: () => import("./sheets.functions-BMKY-AOC.mjs")
+    importer: () => import("./sheets.functions-DRHxXot3.mjs")
   },
   "279013415d8879536663bc71bf748c2c0049951730b66306c6e37bb4c6410fab": {
     functionName: "updateInsumoEstoque_createServerFn_handler",
-    importer: () => import("./sheets.functions-BMKY-AOC.mjs")
+    importer: () => import("./sheets.functions-DRHxXot3.mjs")
   },
   "2e3e59eeadd7bcf6a66d9677593158f64348428cf5a0bd3a5831ff8f3462de7c": {
     functionName: "deleteUsuario_createServerFn_handler",
-    importer: () => import("./sheets.functions-BMKY-AOC.mjs")
+    importer: () => import("./sheets.functions-DRHxXot3.mjs")
   },
   "30f335ac158e11d5ced31c6ac9fad02ca9456cdc278156df26a6ce4bdd7be5e5": {
     functionName: "initSpreadsheet_createServerFn_handler",
-    importer: () => import("./sheets.functions-BMKY-AOC.mjs")
+    importer: () => import("./sheets.functions-DRHxXot3.mjs")
   },
   "49ea7a124a3752bb56337e063cc0a065ac064e6dcdd109ec559161ac42947242": {
     functionName: "updatePedidoStatus_createServerFn_handler",
-    importer: () => import("./sheets.functions-BMKY-AOC.mjs")
+    importer: () => import("./sheets.functions-DRHxXot3.mjs")
   },
   "587e35c06077c25c5093243f337ebb6ffad1be7785c2cd09f8d49a169cea4a3c": {
     functionName: "listUsuarios_createServerFn_handler",
-    importer: () => import("./sheets.functions-BMKY-AOC.mjs")
+    importer: () => import("./sheets.functions-DRHxXot3.mjs")
   },
   "663c6b8df3f2452ef44143a8c7e68c6a255c6e8cdeb2159dd4e2a290e6dda770": {
     functionName: "checkSetup_createServerFn_handler",
-    importer: () => import("./sheets.functions-BMKY-AOC.mjs")
+    importer: () => import("./sheets.functions-DRHxXot3.mjs")
   },
   "66da5a9083ee0ccae00a50b0252005b2760192a1528ea3c1415b3ef03a6f2854": {
     functionName: "createProduto_createServerFn_handler",
-    importer: () => import("./sheets.functions-BMKY-AOC.mjs")
+    importer: () => import("./sheets.functions-DRHxXot3.mjs")
   },
   "76923029291ef37c7c4735fb308ac9f1cc7d3dacf696f29dc5677df508c05078": {
     functionName: "listClientes_createServerFn_handler",
-    importer: () => import("./sheets.functions-BMKY-AOC.mjs")
+    importer: () => import("./sheets.functions-DRHxXot3.mjs")
   },
   "79e05e594fc4eaddafbc32c27467784ee46b2cc4d44cdc3b0a1183e891f5be3d": {
     functionName: "listProdutos_createServerFn_handler",
-    importer: () => import("./sheets.functions-BMKY-AOC.mjs")
+    importer: () => import("./sheets.functions-DRHxXot3.mjs")
   },
   "7f12810f7dcc5f91dc523d17c2438b1ce8764e57a89c4125f15a7591f3e86404": {
     functionName: "createUsuario_createServerFn_handler",
-    importer: () => import("./sheets.functions-BMKY-AOC.mjs")
+    importer: () => import("./sheets.functions-DRHxXot3.mjs")
   },
   "8f39f317fbdd81930f60116d968149dd1a4d84569b81662e011620a752d29d72": {
     functionName: "createPedidoPublico_createServerFn_handler",
-    importer: () => import("./sheets.functions-BMKY-AOC.mjs")
+    importer: () => import("./sheets.functions-DRHxXot3.mjs")
   },
   "a0d29e2340371b4f56c86c45bf67e96be0aa556b02a9fa89834fd5a0e3e21d2f": {
     functionName: "updatePedidoPagamento_createServerFn_handler",
-    importer: () => import("./sheets.functions-BMKY-AOC.mjs")
+    importer: () => import("./sheets.functions-DRHxXot3.mjs")
   },
   "a426cbc758e0edfda05b763c48156f4a7314ad4f4ba640d12f5b01e02c481132": {
     functionName: "listInsumos_createServerFn_handler",
-    importer: () => import("./sheets.functions-BMKY-AOC.mjs")
+    importer: () => import("./sheets.functions-DRHxXot3.mjs")
   },
   "a91e44fdae2e28f9adad8d93a522aab354ab117801ad67604577ec2e113ecce2": {
     functionName: "listFichas_createServerFn_handler",
-    importer: () => import("./sheets.functions-BMKY-AOC.mjs")
+    importer: () => import("./sheets.functions-DRHxXot3.mjs")
   },
   "b2fd925b6e069543ffa0d03cdc0b6f2b21c3809fa27871930f2fca2ae4c250c4": {
     functionName: "updateProduto_createServerFn_handler",
-    importer: () => import("./sheets.functions-BMKY-AOC.mjs")
+    importer: () => import("./sheets.functions-DRHxXot3.mjs")
   },
   "c63d94b1ce53588134a59235954df1b731a7f61921ffecaf7bdcee5284737d49": {
     functionName: "getConfig_createServerFn_handler",
-    importer: () => import("./sheets.functions-BMKY-AOC.mjs")
+    importer: () => import("./sheets.functions-DRHxXot3.mjs")
   },
   "cd5bc80bb9779c63b05c13cd0fa78c591f2f020001ac59f2ddf46df0ce53f542": {
     functionName: "upsertFicha_createServerFn_handler",
-    importer: () => import("./sheets.functions-BMKY-AOC.mjs")
+    importer: () => import("./sheets.functions-DRHxXot3.mjs")
   },
   "d12402f2c6a1cd4ca968e95a2c80f69f5b865cc361e164cb5c7a83eb2eb340c1": {
     functionName: "createInsumo_createServerFn_handler",
-    importer: () => import("./sheets.functions-BMKY-AOC.mjs")
+    importer: () => import("./sheets.functions-DRHxXot3.mjs")
   },
   "d84674c9ee9ea7f8e7940d9cc8ccb6c4bd3b5595a7992e6ac6ff3f8f88f3e654": {
     functionName: "testWrite_createServerFn_handler",
-    importer: () => import("./sheets.functions-BMKY-AOC.mjs")
+    importer: () => import("./sheets.functions-DRHxXot3.mjs")
   },
   "de300c9fad2579904e8a1cee65cf1eb0163b37cc76ca31c434760f2761d91a43": {
     functionName: "updateUsuario_createServerFn_handler",
-    importer: () => import("./sheets.functions-BMKY-AOC.mjs")
+    importer: () => import("./sheets.functions-DRHxXot3.mjs")
   },
   "e3ac09efebc3d5a257d46c97e9f008a728541f9f825ded86517a90c2dec4265b": {
     functionName: "listProdutosPublico_createServerFn_handler",
-    importer: () => import("./sheets.functions-BMKY-AOC.mjs")
+    importer: () => import("./sheets.functions-DRHxXot3.mjs")
   },
   "edc205e6b3b56ae8c658246baa56ad0c9ec364524148126449582cdc97a0071a": {
     functionName: "createCliente_createServerFn_handler",
-    importer: () => import("./sheets.functions-BMKY-AOC.mjs")
+    importer: () => import("./sheets.functions-DRHxXot3.mjs")
   },
   "ee83c3007db522ec49cc5fc8a2389a5ceb65d20da6f75cbc654db47d8c89c37b": {
     functionName: "listCustosAdicionais_createServerFn_handler",
-    importer: () => import("./sheets.functions-BMKY-AOC.mjs")
+    importer: () => import("./sheets.functions-DRHxXot3.mjs")
   },
   "f91c62f5276b7bcf04d1696112413e74991ca62f78b3d767587c8a629b15c0be": {
     functionName: "listFinanceiro_createServerFn_handler",
-    importer: () => import("./sheets.functions-BMKY-AOC.mjs")
+    importer: () => import("./sheets.functions-DRHxXot3.mjs")
   },
   "fc90d3a63e9c994be1e2879d8c2acb401f0d097054609e936fde4726c5894df6": {
     functionName: "updateConfig_createServerFn_handler",
-    importer: () => import("./sheets.functions-BMKY-AOC.mjs")
+    importer: () => import("./sheets.functions-DRHxXot3.mjs")
   }
 };
 async function getServerFnById(id, access) {
@@ -1451,8 +1451,8 @@ var getBaseManifest = getProdBaseManifest;
 var createEarlyHintsForRequest = createEarlyHintsCollector;
 async function loadEntries() {
   const [routerEntry, startEntry, pluginAdapters] = await Promise.all([
-    import("./router-Bf6-tPD-.mjs").then((n) => n.D),
-    import("./start-DF3qJ9zT.mjs"),
+    import("./router-Dslp066D.mjs").then((n) => n.D),
+    import("./start-CHKd0YPE.mjs"),
     import("./empty-plugin-adapters-BFgPZ6_d.mjs")
   ]);
   return {
