@@ -1,3 +1,5 @@
+declare const fetch: any;
+
 // Server functions mapping the NEW Google Sheet to the UI types.
 // Spreadsheet: 1NYQBaQ9JXnLxm6Gj9z6wqnagHBZadZRx3_VFCXKFCq0
 // Tabs (única fonte da verdade):

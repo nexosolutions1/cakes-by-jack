@@ -1,3 +1,5 @@
+declare const fetch: any;
+
 // Google Sheets backend via Apps Script.
 // Independente do Lovable e sem Google Cloud Console.
 
