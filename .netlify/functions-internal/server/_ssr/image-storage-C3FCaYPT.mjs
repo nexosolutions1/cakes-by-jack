@@ -17,7 +17,7 @@ function compressImage(file) {
     reader.onerror = () => reject(new Error("Erro ao ler imagem"));
     img.onload = () => {
       const canvas = document.createElement("canvas");
-      const maxWidth = 250;
+      const maxWidth = 700;
       const scale = Math.min(1, maxWidth / img.width);
       canvas.width = Math.round(img.width * scale);
       canvas.height = Math.round(img.height * scale);
@@ -27,16 +27,14 @@ function compressImage(file) {
         return;
       }
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      let quality = 0.45;
+      let quality = 0.75;
       let dataUrl = canvas.toDataURL("image/jpeg", quality);
-      while (dataUrl.length > 18e3 && quality > 0.15) {
+      while (dataUrl.length > 9e4 && quality > 0.45) {
         quality -= 0.05;
         dataUrl = canvas.toDataURL("image/jpeg", quality);
       }
-      if (dataUrl.length > 18e3) {
-        reject(
-          new Error("Imagem muito grande. Use uma imagem menor.")
-        );
+      if (dataUrl.length > 9e4) {
+        reject(new Error("Imagem muito grande. Use uma imagem menor."));
         return;
       }
       resolve(dataUrl);

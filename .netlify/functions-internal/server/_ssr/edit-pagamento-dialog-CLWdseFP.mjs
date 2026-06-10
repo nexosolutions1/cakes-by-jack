@@ -5,7 +5,7 @@ import { I as Input, B as Button } from "./brand-logo-3iPsG8o9.mjs";
 import { L as Label } from "./label-tl_MnXN1.mjs";
 import { S as Select, a as SelectTrigger, b as SelectValue, c as SelectContent, d as SelectItem } from "./select-CmacHktB.mjs";
 import { b as DialogContent, c as DialogHeader, d as DialogTitle, e as DialogFooter } from "./dialog-DsEyClLt.mjs";
-import { i as updatePedidoPagamento } from "./router-Dslp066D.mjs";
+import { i as updatePedidoPagamento } from "./router-8vuZ9gUy.mjs";
 import { b as parseMoney, a as formatBRL } from "./format-DkCAcujl.mjs";
 import { t as toast } from "../_libs/sonner.mjs";
 import { L as LoaderCircle } from "../_libs/lucide-react.mjs";

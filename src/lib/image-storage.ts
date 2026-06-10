@@ -2,7 +2,6 @@ export function publicImageUrl(path: string): string {
   if (!path) return "";
 
   if (path.startsWith("data:image/")) return path;
-
   if (path.startsWith("http://") || path.startsWith("https://")) return path;
 
   if (!path.includes("/") && !path.includes(".") && path.length > 20) {
@@ -26,8 +25,7 @@ function compressImage(file: File): Promise<string> {
     img.onload = () => {
       const canvas = document.createElement("canvas");
 
-      // REDUZ MUITO O TAMANHO
-      const maxWidth = 250;
+      const maxWidth = 700;
       const scale = Math.min(1, maxWidth / img.width);
 
       canvas.width = Math.round(img.width * scale);
@@ -41,18 +39,16 @@ function compressImage(file: File): Promise<string> {
 
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-      let quality = 0.45;
+      let quality = 0.75;
       let dataUrl = canvas.toDataURL("image/jpeg", quality);
 
-      while (dataUrl.length > 18000 && quality > 0.15) {
+      while (dataUrl.length > 90000 && quality > 0.45) {
         quality -= 0.05;
         dataUrl = canvas.toDataURL("image/jpeg", quality);
       }
 
-      if (dataUrl.length > 18000) {
-        reject(
-          new Error("Imagem muito grande. Use uma imagem menor.")
-        );
+      if (dataUrl.length > 90000) {
+        reject(new Error("Imagem muito grande. Use uma imagem menor."));
         return;
       }
 
@@ -60,7 +56,6 @@ function compressImage(file: File): Promise<string> {
     };
 
     img.onerror = () => reject(new Error("Imagem inválida"));
-
     reader.readAsDataURL(file);
   });
 }
