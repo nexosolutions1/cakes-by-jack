@@ -1,7 +1,7 @@
-const SCRIPT_URL = import.meta.env.VITE_GOOGLE_SCRIPT_URL || "";
-
 export function publicImageUrl(path: string): string {
   if (!path) return "";
+
+  if (path.startsWith("data:image/")) return path;
 
   if (path.startsWith("http://") || path.startsWith("https://")) return path;
 
@@ -12,48 +12,23 @@ export function publicImageUrl(path: string): string {
   return "";
 }
 
-function fileToBase64(file: File): Promise<string> {
+function fileToDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
 
-    reader.onload = () => {
-      const result = String(reader.result || "");
-      const base64 = result.includes(",") ? result.split(",")[1] : result;
-      resolve(base64);
-    };
-
+    reader.onload = () => resolve(String(reader.result || ""));
     reader.onerror = () => reject(new Error("Erro ao ler imagem"));
+
     reader.readAsDataURL(file);
   });
 }
 
 export async function uploadProductImage(file: File): Promise<string> {
-  if (!SCRIPT_URL) {
-    throw new Error("VITE_GOOGLE_SCRIPT_URL não configurado no Netlify");
+  if (file.size > 800 * 1024) {
+    throw new Error("Imagem muito grande. Use uma imagem menor que 800 KB.");
   }
 
-  const base64 = await fileToBase64(file);
-
-  const res = await fetch(SCRIPT_URL, {
-    method: "POST",
-    headers: { "Content-Type": "text/plain;charset=utf-8" },
-    body: JSON.stringify({
-      action: "uploadImage",
-      payload: {
-        filename: file.name,
-        mimeType: file.type,
-        base64,
-      },
-    }),
-  });
-
-  const data = await res.json();
-
-  if (!res.ok || data.ok === false) {
-    throw new Error(data.error || "Erro ao enviar imagem");
-  }
-
-  return data.url;
+  return fileToDataUrl(file);
 }
 
 export async function deleteProductImage(_path: string): Promise<void> {

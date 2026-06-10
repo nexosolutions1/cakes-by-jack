@@ -3,7 +3,7 @@ import { Q as QueryClientProvider, u as useQuery, q as queryOptions } from "../_
 import { c as createRouter, a as createRootRouteWithContext, u as useRouter, L as Link, O as Outlet, H as HeadContent, S as Scripts, b as createFileRoute, l as lazyRouteComponent } from "../_libs/tanstack__react-router.mjs";
 import { r as reactExports, j as jsxRuntimeExports } from "../_libs/react.mjs";
 import { T as Toaster$1 } from "../_libs/sonner.mjs";
-import { c as createServerFn, T as TSS_SERVER_FUNCTION, g as getServerFnById } from "./server-CBnRcYXi.mjs";
+import { c as createServerFn, T as TSS_SERVER_FUNCTION, g as getServerFnById } from "./server-PLKfWEBp.mjs";
 import { c as createClient } from "../_libs/supabase__supabase-js.mjs";
 import { r as readTable } from "./sheets.server-e71hR5JP.mjs";
 import { o as objectType, s as stringType, n as numberType, e as enumType } from "../_libs/zod.mjs";
@@ -425,7 +425,7 @@ function RootComponent() {
     /* @__PURE__ */ jsxRuntimeExports.jsx(Toaster, { richColors: true, position: "top-right" })
   ] }) });
 }
-const $$splitComponentImporter$e = () => import("./setup-DjxGtzqp.mjs");
+const $$splitComponentImporter$e = () => import("./setup-DM85t6Yd.mjs");
 const Route$g = createFileRoute("/setup")({
   head: () => ({
     meta: [{
@@ -434,7 +434,7 @@ const Route$g = createFileRoute("/setup")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$e, "component")
 });
-const $$splitComponentImporter$d = () => import("./relatorios-D-SzCXYb.mjs");
+const $$splitComponentImporter$d = () => import("./relatorios-D5ESlTs1.mjs");
 const Route$f = createFileRoute("/relatorios")({
   head: () => ({
     meta: [{
@@ -446,7 +446,7 @@ const Route$f = createFileRoute("/relatorios")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$d, "component")
 });
-const $$splitComponentImporter$c = () => import("./produtos-BJKmW1Ow.mjs");
+const $$splitComponentImporter$c = () => import("./produtos-C3FLzgk-.mjs");
 const Route$e = createFileRoute("/produtos")({
   head: () => ({
     meta: [{
@@ -458,7 +458,7 @@ const Route$e = createFileRoute("/produtos")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$c, "component")
 });
-const $$splitComponentImporter$b = () => import("./pedidos-RqquDisK.mjs");
+const $$splitComponentImporter$b = () => import("./pedidos-CVVcz214.mjs");
 const Route$d = createFileRoute("/pedidos")({
   head: () => ({
     meta: [{
@@ -470,7 +470,7 @@ const Route$d = createFileRoute("/pedidos")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$b, "component")
 });
-const $$splitComponentImporter$a = () => import("./login-Nq_RdXUr.mjs");
+const $$splitComponentImporter$a = () => import("./login-CBS0FQZX.mjs");
 const Route$c = createFileRoute("/login")({
   head: () => ({
     meta: [{
@@ -479,7 +479,7 @@ const Route$c = createFileRoute("/login")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$a, "component")
 });
-const $$splitComponentImporter$9 = () => import("./insumos-mIvLNf8f.mjs");
+const $$splitComponentImporter$9 = () => import("./insumos-BD6E2lXL.mjs");
 const Route$b = createFileRoute("/insumos")({
   head: () => ({
     meta: [{
@@ -491,7 +491,7 @@ const Route$b = createFileRoute("/insumos")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$9, "component")
 });
-const $$splitComponentImporter$8 = () => import("./financeiro-BZ9qpuu7.mjs");
+const $$splitComponentImporter$8 = () => import("./financeiro-R0ktySlr.mjs");
 const Route$a = createFileRoute("/financeiro")({
   head: () => ({
     meta: [{
@@ -503,7 +503,7 @@ const Route$a = createFileRoute("/financeiro")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$8, "component")
 });
-const $$splitComponentImporter$7 = () => import("./ficha-tecnica-I95DBMBU.mjs");
+const $$splitComponentImporter$7 = () => import("./ficha-tecnica-B1erH4PX.mjs");
 const Route$9 = createFileRoute("/ficha-tecnica")({
   head: () => ({
     meta: [{
@@ -515,7 +515,7 @@ const Route$9 = createFileRoute("/ficha-tecnica")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$7, "component")
 });
-const $$splitComponentImporter$6 = () => import("./configuracoes-CBwczejA.mjs");
+const $$splitComponentImporter$6 = () => import("./configuracoes-oFt0kAj8.mjs");
 const Route$8 = createFileRoute("/configuracoes")({
   head: () => ({
     meta: [{
@@ -524,7 +524,7 @@ const Route$8 = createFileRoute("/configuracoes")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$6, "component")
 });
-const $$splitComponentImporter$5 = () => import("./clientes-mJCQVEzw.mjs");
+const $$splitComponentImporter$5 = () => import("./clientes-46RI-Iad.mjs");
 const Route$7 = createFileRoute("/clientes")({
   head: () => ({
     meta: [{
@@ -536,7 +536,7 @@ const Route$7 = createFileRoute("/clientes")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$5, "component")
 });
-const $$splitComponentImporter$4 = () => import("./catalogo-rFEMEmhb.mjs");
+const $$splitComponentImporter$4 = () => import("./catalogo-VYrP3DgT.mjs");
 const Route$6 = createFileRoute("/catalogo")({
   head: () => ({
     meta: [{
@@ -548,7 +548,7 @@ const Route$6 = createFileRoute("/catalogo")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$4, "component")
 });
-const $$splitComponentImporter$3 = () => import("./calendario-B_BKHy6S.mjs");
+const $$splitComponentImporter$3 = () => import("./calendario-DwN_8DNo.mjs");
 const Route$5 = createFileRoute("/calendario")({
   head: () => ({
     meta: [{
@@ -564,8 +564,8 @@ const setupQO = queryOptions({
   queryKey: ["setup"],
   queryFn: () => checkSetup()
 });
-const $$splitErrorComponentImporter = () => import("./index-aYEfKKXB.mjs");
-const $$splitComponentImporter$2 = () => import("./index-smvVORMD.mjs");
+const $$splitErrorComponentImporter = () => import("./index-CHEwq7jp.mjs");
+const $$splitComponentImporter$2 = () => import("./index-DokQR0tJ.mjs");
 const Route$4 = createFileRoute("/")({
   head: () => ({
     meta: [{
@@ -581,7 +581,7 @@ const Route$4 = createFileRoute("/")({
   component: lazyRouteComponent($$splitComponentImporter$2, "component"),
   errorComponent: lazyRouteComponent($$splitErrorComponentImporter, "errorComponent")
 });
-const $$splitComponentImporter$1 = () => import("./c.catalogo-McQ5FWOt.mjs");
+const $$splitComponentImporter$1 = () => import("./c.catalogo-Cm59Oghj.mjs");
 const Route$3 = createFileRoute("/c/catalogo")({
   head: () => ({
     meta: [{
@@ -593,7 +593,7 @@ const Route$3 = createFileRoute("/c/catalogo")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$1, "component")
 });
-const $$splitComponentImporter = () => import("./admin.nexo-DCGihx_-.mjs");
+const $$splitComponentImporter = () => import("./admin.nexo-Dlun4jpk.mjs");
 const Route$2 = createFileRoute("/admin/nexo")({
   head: () => ({
     meta: [{
