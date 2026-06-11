@@ -4,7 +4,7 @@ declare const fetch: any;
 // Independente do Lovable e sem Google Cloud Console.
 
 export const SPREADSHEET_ID =
-  process.env.GOOGLE_SHEETS_ID || "1NYQBaQ9JXnLxm6Gj9z6wqnagHBZadZRx3_VFCXKFCq0";
+  process.env.GOOGLE_SHEETS_ID || "1OR4EUXPXBvVYnzCiaERSTiagoXaS890fN2iZqVRZlpM";
 
 const SCRIPT_URL = process.env.GOOGLE_SCRIPT_URL;
 
