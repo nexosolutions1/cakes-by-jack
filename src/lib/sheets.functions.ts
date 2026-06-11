@@ -752,24 +752,57 @@ export const createPedidoPublico = createServerFn({ method: "POST" })
       .filter(Boolean)
       .join(" - ");
 
-    const clienteId = newId("CLI");
-
-    await appendRecord("Clientes", {
-      "ID Cliente": clienteId,
-      Nome: data.clienteNome,
-      WhatsApp: waNorm,
-      Endereco: enderecoFmt,
-      Observacoes: "Cliente do catálogo público",
-    });
+    let clienteId = "";
 
     try {
-      await appendRecord("Usuarios", {
-        "ID Usuario": newId("USR"),
+      const clientes = await listClientes();
+      const existente = clientes.find(
+        (c) => normalizePhone(c.whatsapp || c.telefone) === waNorm,
+      );
+
+      if (existente?.id) {
+        clienteId = existente.id;
+
+        const row = await findRow("Clientes", "ID Cliente", clienteId);
+        if (row > 0) {
+          await updateRecord("Clientes", row, {
+            Nome: data.clienteNome,
+            WhatsApp: waNorm,
+            Endereco: enderecoFmt,
+          });
+        }
+      }
+    } catch (e) {
+      console.error("Erro ao buscar cliente existente:", e);
+    }
+
+    if (!clienteId) {
+      clienteId = newId("CLI");
+
+      await appendRecord("Clientes", {
+        "ID Cliente": clienteId,
         Nome: data.clienteNome,
         WhatsApp: waNorm,
-        Perfil: "CLIENTE",
-        Status: "Ativo",
+        Endereco: enderecoFmt,
+        Observacoes: "Cliente do catálogo público",
       });
+    }
+
+    try {
+      const usuarios = await listUsuariosRaw();
+      const usuarioExiste = usuarios.find(
+        (u) => normalizePhone(u.whatsapp) === waNorm,
+      );
+
+      if (!usuarioExiste) {
+        await appendRecord("Usuarios", {
+          "ID Usuario": newId("USR"),
+          Nome: data.clienteNome,
+          WhatsApp: waNorm,
+          Perfil: "CLIENTE",
+          Status: "Ativo",
+        });
+      }
     } catch (e) {
       console.error("Erro não fatal ao criar usuário público:", e);
     }
