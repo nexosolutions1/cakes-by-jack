@@ -737,11 +737,13 @@ export const createPedidoPublico = createServerFn({ method: "POST" })
     const qty = data.quantidade > 0 ? data.quantidade : 1;
     const preco = data.preco > 0 ? data.preco : 0;
     const total = preco * qty;
+
     if (total <= 0) {
       throw new Error("Valor total inválido. Verifique o preço do produto.");
     }
 
     const waNorm = normalizePhone(data.whatsapp);
+
     const enderecoFmt = [
       [data.rua, data.numero].filter(Boolean).join(", "),
       data.bairro,
@@ -750,47 +752,30 @@ export const createPedidoPublico = createServerFn({ method: "POST" })
       .filter(Boolean)
       .join(" - ");
 
-    const clientes = await listClientes();
-    const existing = clientes.find((c) => normalizePhone(c.whatsapp) === waNorm);
-    let clienteId = existing?.id ?? "";
+    const clienteId = newId("CLI");
 
-    if (!clienteId) {
-      clienteId = newId("CLI");
-      await appendRecord("Clientes", {
-        "ID Cliente": clienteId,
+    await appendRecord("Clientes", {
+      "ID Cliente": clienteId,
+      Nome: data.clienteNome,
+      WhatsApp: waNorm,
+      Endereco: enderecoFmt,
+      Observacoes: "Cliente do catálogo público",
+    });
+
+    try {
+      await appendRecord("Usuarios", {
+        "ID Usuario": newId("USR"),
         Nome: data.clienteNome,
         WhatsApp: waNorm,
-        Endereco: enderecoFmt,
-        Observacoes: "Cliente do catálogo público",
+        Perfil: "CLIENTE",
+        Status: "Ativo",
       });
-    } else if (enderecoFmt) {
-      // Atualiza endereço se cliente já existe e informou novo endereço
-      const row = await findRow("Clientes", "ID Cliente", clienteId);
-      if (row > 0) {
-        await updateRecord("Clientes", row, {
-          Nome: data.clienteNome,
-          Endereco: enderecoFmt,
-        });
-      }
-    }
-
-    // Auto-register as CLIENTE user if not exists
-    try {
-      const usuarios = await listUsuariosRaw();
-      if (!usuarios.find((u) => normalizePhone(u.whatsapp) === waNorm)) {
-        await appendRecord("Usuarios", {
-          "ID Usuario": newId("USR"),
-          Nome: data.clienteNome,
-          WhatsApp: waNorm,
-          Perfil: "CLIENTE",
-          Status: "Ativo",
-        });
-      }
-    } catch {
-      /* non-fatal */
+    } catch (e) {
+      console.error("Erro não fatal ao criar usuário público:", e);
     }
 
     const id = newId("PED");
+
     await appendRecord("Pedidos", {
       "ID Pedido": id,
       "Data Pedido": todayISO(),
@@ -811,6 +796,7 @@ export const createPedidoPublico = createServerFn({ method: "POST" })
       "Forma Pagamento": "Pix",
       Observacoes: data.observacoes,
     });
+
     return { id, total, entradaMinima: total * 0.5 };
   });
 
