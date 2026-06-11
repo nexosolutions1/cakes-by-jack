@@ -17,7 +17,7 @@ import {
   BarChart, Bar, LineChart, Line, PieChart, Pie, Cell as PieCell,
   XAxis, YAxis, Tooltip, ResponsiveContainer,
 } from "recharts";
-import banner from "@/assets/dashboard-banner.jpg";
+import dashboardBanner from "@/assets/catalogo-hero-bolo.png";
 
 const setupQO = queryOptions({ queryKey: ["setup"], queryFn: () => checkSetup() });
 
@@ -165,8 +165,18 @@ function DashboardContent() {
     { label: "Valor recebido", value: fmt(recebido), icon: DollarSign, tint: "bg-success/15 text-success" },
     { label: "Valor a receber", value: fmt(aReceber), icon: DollarSign, tint: "bg-rose-soft text-rose-deep" },
     { label: "Pedidos da semana", value: inWeek.length, icon: CalendarDays, tint: "bg-accent text-rose-deep" },
-    { label: "Clientes", value: clientes.length, icon: Users, tint: "bg-accent text-foreground" },
-    { label: "Catálogo", value: produtos.length, icon: Sparkles, tint: "bg-gold/20 text-gold-foreground" },
+{
+  label: "Clientes",
+  value: new Set(
+    clientes.map((c) => {
+      const whats = String((c as any).whatsapp || "").replace(/\D+/g, "");
+      const nome = String((c as any).nome || "").trim().toLowerCase();
+      return whats || nome;
+    }),
+  ).size,
+  icon: Users,
+  tint: "bg-accent text-foreground",
+},    { label: "Catálogo", value: produtos.length, icon: Sparkles, tint: "bg-gold/20 text-gold-foreground" },
   ];
 
   const proximos = [...ativos]
@@ -177,7 +187,7 @@ function DashboardContent() {
   return (
     <div className="space-y-6">
       <div className="relative overflow-hidden rounded-3xl shadow-card">
-        <img src={banner} alt="" className="h-44 w-full object-cover md:h-52" />
+        <img src={dashboardBanner} alt="" className="h-44 w-full object-cover md:h-52" />
         <div className="absolute inset-0 bg-gradient-to-r from-primary/85 via-primary/55 to-transparent" />
         <div className="absolute inset-0 flex flex-col justify-center p-6 md:p-8 text-primary-foreground">
           <p className="text-xs uppercase tracking-[0.25em] opacity-90">Cakes by Jack</p>

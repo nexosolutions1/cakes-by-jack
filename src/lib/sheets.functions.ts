@@ -122,6 +122,7 @@ export type Insumo = {
   estoqueMinimo: string;
   valorUnitario: string;
   observacoes: string;
+  ativo: string;
 };
 
 export type Ficha = {
@@ -135,6 +136,7 @@ export type Ficha = {
   margem: string;
   observacoes: string;
   rendimento: string;
+  ativo: string;
 };
 
 export type CustoAdicional = {
@@ -492,6 +494,7 @@ export const listInsumos = createServerFn({ method: "GET" }).handler(
         estoqueMinimo: get(r, headers, "Estoque Minimo"),
         valorUnitario: get(r, headers, "Custo Unitario"),
         observacoes: get(r, headers, "Observacoes"),
+        ativo: get(r, headers, "ativo"),
       }))
       .filter((i) => i.id && i.nome);
   },
@@ -548,6 +551,32 @@ export const updateInsumoEstoque = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+  export const deleteInsumo = createServerFn({ method: "POST" })
+  .inputValidator(z.object({ id: z.string().min(1) }))
+  .handler(async ({ data }) => {
+    const row = await findRow("Insumos", "ID Insumo", data.id);
+    if (row < 0) throw new Error("Insumo não encontrado");
+
+    await updateRecord("Insumos", row, {
+      Ativo: "Não",
+    });
+
+    return { ok: true };
+  });
+
+export const deleteFicha = createServerFn({ method: "POST" })
+  .inputValidator(z.object({ id: z.string().min(1) }))
+  .handler(async ({ data }) => {
+    const row = await findRow("Receitas", "ID Receita", data.id);
+    if (row < 0) throw new Error("Ficha não encontrada");
+
+    await updateRecord("Receitas", row, {
+      Ativo: "Não",
+    });
+
+    return { ok: true };
+  });
+
 export const listFichas = createServerFn({ method: "GET" }).handler(
   async (): Promise<Ficha[]> => {
     const { headers, rows } = await readTable("Receitas");
@@ -573,8 +602,9 @@ return {
   margem: margem.toFixed(1),
   observacoes: get(r, headers, "Observacoes"),
   rendimento: get(r, headers, "Rendimento") || "1",
+  ativo: get(r, headers, "Ativo"),
 };      })
-      .filter((f) => f.id && f.produtoNome);
+.filter((f) => f.id && f.produtoNome && f.ativo !== "Não");
   },
 );
 
@@ -755,25 +785,30 @@ export const createPedidoPublico = createServerFn({ method: "POST" })
     let clienteId = "";
 
     try {
-      const clientes = await listClientes();
-      const existente = clientes.find(
-        (c) => normalizePhone(c.whatsapp || c.telefone) === waNorm,
-      );
+      const { headers, rows, rowOffset } = await readTable("Clientes");
 
-      if (existente?.id) {
-        clienteId = existente.id;
+      const idxId = headers.findIndex((h) => normalizeHeader(h) === "id cliente");
+      const idxNome = headers.findIndex((h) => normalizeHeader(h) === "nome");
+      const idxWhats = headers.findIndex((h) => normalizeHeader(h) === "whatsapp");
 
-        const row = await findRow("Clientes", "ID Cliente", clienteId);
-        if (row > 0) {
-          await updateRecord("Clientes", row, {
-            Nome: data.clienteNome,
-            WhatsApp: waNorm,
-            Endereco: enderecoFmt,
-          });
-        }
+      const foundIndex = rows.findIndex((r) => {
+        const whatsLinha = normalizePhone(r[idxWhats] || "");
+        return whatsLinha && whatsLinha === waNorm;
+      });
+
+      if (foundIndex >= 0) {
+        const row = rows[foundIndex];
+        clienteId = row[idxId] || newId("CLI");
+
+        await updateRecord("Clientes", rowOffset + foundIndex, {
+          "ID Cliente": clienteId,
+          Nome: data.clienteNome || row[idxNome] || "",
+          WhatsApp: waNorm,
+          Endereco: enderecoFmt,
+        });
       }
     } catch (e) {
-      console.error("Erro ao buscar cliente existente:", e);
+      console.error("Erro ao buscar/atualizar cliente existente:", e);
     }
 
     if (!clienteId) {
@@ -789,10 +824,10 @@ export const createPedidoPublico = createServerFn({ method: "POST" })
     }
 
     try {
-      const usuarios = await listUsuariosRaw();
-      const usuarioExiste = usuarios.find(
-        (u) => normalizePhone(u.whatsapp) === waNorm,
-      );
+      const { headers, rows } = await readTable("Usuarios");
+      const idxWhats = headers.findIndex((h) => normalizeHeader(h) === "whatsapp");
+
+      const usuarioExiste = rows.some((r) => normalizePhone(r[idxWhats] || "") === waNorm);
 
       if (!usuarioExiste) {
         await appendRecord("Usuarios", {

@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Package, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
@@ -21,6 +22,7 @@ import {
   createInsumo,
   listInsumos,
   updateInsumoEstoque,
+  deleteInsumo,
   type Insumo,
 } from "@/lib/sheets.functions";
 import { toast } from "sonner";
@@ -97,6 +99,7 @@ function InsumosPage() {
 function InsumoCard({ insumo }: { insumo: Insumo }) {
   const s = status(insumo);
   const update = useServerFn(updateInsumoEstoque);
+  const remove = useServerFn(deleteInsumo);
   const qc = useQueryClient();
   const [value, setValue] = useState(insumo.estoqueAtual);
   const mut = useMutation({
@@ -111,6 +114,28 @@ function InsumoCard({ insumo }: { insumo: Insumo }) {
     <Card className="border-border/60 shadow-card">
       <CardContent className="space-y-3 p-5">
         <div className="flex items-start justify-between gap-3">
+          <Button
+  variant="ghost"
+  size="icon"
+  className="h-8 w-8 text-red-500 hover:text-red-600"
+onClick={async () => {
+  if (!confirm(`Excluir o insumo "${insumo.nome}"?`)) return;
+
+  await remove({
+    data: {
+      id: insumo.id,
+    },
+  });
+
+  toast.success("Insumo excluído");
+
+  qc.invalidateQueries({
+    queryKey: ["insumos"],
+  });
+}}
+>
+  <Trash2 className="h-4 w-4" />
+</Button>
           <div className="flex items-center gap-2">
             <div className="bg-gradient-rose flex h-9 w-9 items-center justify-center rounded-full">
               <Boxes className="h-4 w-4 text-rose-deep" />

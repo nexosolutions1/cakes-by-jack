@@ -1,17 +1,17 @@
 import { r as reactExports, j as jsxRuntimeExports } from "../_libs/react.mjs";
 import { u as useQuery, b as useQueryClient, a as useMutation } from "../_libs/tanstack__react-query.mjs";
 import { u as useServerFn } from "./useServerFn-DL2oePlL.mjs";
-import { A as AppLayout } from "./app-layout-CldwD0on.mjs";
+import { A as AppLayout } from "./app-layout-Bh3N7kPK.mjs";
 import { C as Card, c as CardContent } from "./card-Bbtrid8Y.mjs";
 import { B as Button, I as Input } from "./brand-logo-3iPsG8o9.mjs";
 import { L as Label } from "./label-tl_MnXN1.mjs";
 import { B as Badge } from "./badge-PNZ8Owsm.mjs";
 import { D as Dialog, a as DialogTrigger, b as DialogContent, c as DialogHeader, d as DialogTitle, e as DialogFooter } from "./dialog-DsEyClLt.mjs";
-import { f as listInsumos, g as updateInsumoEstoque, h as createInsumo } from "./router-8vuZ9gUy.mjs";
+import { f as listInsumos, g as updateInsumoEstoque, h as deleteInsumo, i as createInsumo } from "./router-DrEiKWY7.mjs";
 import { t as toast } from "../_libs/sonner.mjs";
 import { b as parseMoney } from "./format-DkCAcujl.mjs";
 import "../_libs/seroval.mjs";
-import { c as Plus, B as Boxes, T as TriangleAlert, L as LoaderCircle } from "../_libs/lucide-react.mjs";
+import { c as Plus, T as Trash2, B as Boxes, d as TriangleAlert, L as LoaderCircle } from "../_libs/lucide-react.mjs";
 import "../_libs/tanstack__query-core.mjs";
 import "../_libs/tanstack__react-router.mjs";
 import "../_libs/tanstack__router-core.mjs";
@@ -65,7 +65,7 @@ import "../_libs/@radix-ui/react-visually-hidden+[...].mjs";
 import "./nexo-signature-6kPfTCBv.mjs";
 import "../_libs/tailwind-merge.mjs";
 import "../_libs/radix-ui__react-label.mjs";
-import "./server-DS2HpPV2.mjs";
+import "./server-BK6vLts3.mjs";
 import "node:async_hooks";
 import "../_libs/h3-v2.mjs";
 import "../_libs/rou3.mjs";
@@ -78,7 +78,7 @@ import "../_libs/supabase__storage-js.mjs";
 import "../_libs/iceberg-js.mjs";
 import "../_libs/supabase__auth-js.mjs";
 import "../_libs/supabase__functions-js.mjs";
-import "./sheets.server-e71hR5JP.mjs";
+import "./sheets.server-OHrRPQqp.mjs";
 import "../_libs/zod.mjs";
 function status(i) {
   const atual = Number(i.estoqueAtual) || 0;
@@ -122,6 +122,7 @@ function InsumoCard({
 }) {
   const s = status(insumo);
   const update = useServerFn(updateInsumoEstoque);
+  const remove = useServerFn(deleteInsumo);
   const qc = useQueryClient();
   const [value, setValue] = reactExports.useState(insumo.estoqueAtual);
   const mut = useMutation({
@@ -140,6 +141,18 @@ function InsumoCard({
   });
   return /* @__PURE__ */ jsxRuntimeExports.jsx(Card, { className: "border-border/60 shadow-card", children: /* @__PURE__ */ jsxRuntimeExports.jsxs(CardContent, { className: "space-y-3 p-5", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-start justify-between gap-3", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { variant: "ghost", size: "icon", className: "h-8 w-8 text-red-500 hover:text-red-600", onClick: async () => {
+        if (!confirm(`Excluir o insumo "${insumo.nome}"?`)) return;
+        await remove({
+          data: {
+            id: insumo.id
+          }
+        });
+        toast.success("Insumo excluído");
+        qc.invalidateQueries({
+          queryKey: ["insumos"]
+        });
+      }, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Trash2, { className: "h-4 w-4" }) }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "bg-gradient-rose flex h-9 w-9 items-center justify-center rounded-full", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Boxes, { className: "h-4 w-4 text-rose-deep" }) }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [

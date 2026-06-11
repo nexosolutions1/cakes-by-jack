@@ -1,10 +1,11 @@
 import { r as reactExports, j as jsxRuntimeExports } from "../_libs/react.mjs";
 import { d as useNavigate } from "../_libs/tanstack__react-router.mjs";
-import { e as useAuth, n as normalizePhone$1 } from "./router-8vuZ9gUy.mjs";
+import { e as useAuth, n as normalizePhone$1 } from "./router-DrEiKWY7.mjs";
 import { C as Card, c as CardContent } from "./card-Bbtrid8Y.mjs";
 import { a as BrandLogo, I as Input, B as Button } from "./brand-logo-3iPsG8o9.mjs";
 import { L as Label } from "./label-tl_MnXN1.mjs";
 import { t as toast } from "../_libs/sonner.mjs";
+import { j as jackPremium } from "./jack-confeitaria-premium-CpcJpWBm.mjs";
 import { N as NexoSignature } from "./nexo-signature-6kPfTCBv.mjs";
 import "../_libs/seroval.mjs";
 import { S as Sparkles, L as LoaderCircle } from "../_libs/lucide-react.mjs";
@@ -22,7 +23,7 @@ import "stream";
 import "../_libs/isbot.mjs";
 import "../_libs/tanstack__query-core.mjs";
 import "../_libs/tanstack__react-query.mjs";
-import "./server-DS2HpPV2.mjs";
+import "./server-BK6vLts3.mjs";
 import "node:async_hooks";
 import "../_libs/h3-v2.mjs";
 import "../_libs/rou3.mjs";
@@ -36,7 +37,7 @@ import "../_libs/iceberg-js.mjs";
 import "../_libs/supabase__auth-js.mjs";
 import "tslib";
 import "../_libs/supabase__functions-js.mjs";
-import "./sheets.server-e71hR5JP.mjs";
+import "./sheets.server-OHrRPQqp.mjs";
 import "../_libs/zod.mjs";
 import "../_libs/radix-ui__react-slot.mjs";
 import "../_libs/radix-ui__react-compose-refs.mjs";
@@ -84,10 +85,9 @@ function LoginPage() {
       setSubmitting(false);
     }
   }
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-rose-soft via-cream-soft to-rose-light/60 px-4 py-10", children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pointer-events-none absolute -top-32 -left-32 h-80 w-80 rounded-full bg-primary/25 blur-3xl" }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pointer-events-none absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-gold/20 blur-3xl" }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pointer-events-none absolute top-1/3 right-1/4 h-40 w-40 rounded-full bg-rose-deep/15 blur-2xl" }),
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative flex min-h-screen items-center justify-center overflow-hidden bg-chocolate px-4 py-10", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: jackPremium, alt: "", className: "absolute inset-0 h-full w-full object-cover opacity-35 blur-sm scale-105" }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "absolute inset-0 bg-gradient-to-br from-rose-soft/80 via-cream-soft/75 to-primary/50" }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(Card, { className: "relative z-10 w-full max-w-md border-2 border-white/60 bg-white/80 shadow-elevated backdrop-blur-xl", children: /* @__PURE__ */ jsxRuntimeExports.jsxs(CardContent, { className: "px-6 py-8 sm:px-10 sm:py-10", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col items-center text-center", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "bg-gradient-rose mb-3 inline-flex h-20 w-20 items-center justify-center rounded-full shadow-soft ring-4 ring-white/70", children: /* @__PURE__ */ jsxRuntimeExports.jsx(BrandLogo, { size: 56 }) }),

@@ -1,16 +1,16 @@
 import { r as reactExports, j as jsxRuntimeExports } from "../_libs/react.mjs";
 import { u as useQuery, b as useQueryClient, a as useMutation } from "../_libs/tanstack__react-query.mjs";
 import { u as useServerFn } from "./useServerFn-DL2oePlL.mjs";
-import { A as AppLayout } from "./app-layout-CldwD0on.mjs";
+import { A as AppLayout } from "./app-layout-Bh3N7kPK.mjs";
 import { I as Input, B as Button } from "./brand-logo-3iPsG8o9.mjs";
 import { C as Card, c as CardContent } from "./card-Bbtrid8Y.mjs";
 import { L as Label } from "./label-tl_MnXN1.mjs";
 import { T as Textarea } from "./textarea-CYCFuD-O.mjs";
 import { D as Dialog, a as DialogTrigger, b as DialogContent, c as DialogHeader, d as DialogTitle, e as DialogFooter } from "./dialog-DsEyClLt.mjs";
-import { a as listClientes, q as createCliente } from "./router-8vuZ9gUy.mjs";
+import { a as listClientes, s as createCliente } from "./router-DrEiKWY7.mjs";
 import { t as toast } from "../_libs/sonner.mjs";
 import "../_libs/seroval.mjs";
-import { j as Phone, M as MessageCircle, k as MapPin, c as Plus, L as LoaderCircle } from "../_libs/lucide-react.mjs";
+import { k as Phone, M as MessageCircle, l as MapPin, c as Plus, L as LoaderCircle } from "../_libs/lucide-react.mjs";
 import "../_libs/tanstack__query-core.mjs";
 import "../_libs/tanstack__react-router.mjs";
 import "../_libs/tanstack__router-core.mjs";
@@ -65,7 +65,7 @@ import "./badge-PNZ8Owsm.mjs";
 import "./nexo-signature-6kPfTCBv.mjs";
 import "../_libs/tailwind-merge.mjs";
 import "../_libs/radix-ui__react-label.mjs";
-import "./server-DS2HpPV2.mjs";
+import "./server-BK6vLts3.mjs";
 import "node:async_hooks";
 import "../_libs/h3-v2.mjs";
 import "../_libs/rou3.mjs";
@@ -78,7 +78,7 @@ import "../_libs/supabase__storage-js.mjs";
 import "../_libs/iceberg-js.mjs";
 import "../_libs/supabase__auth-js.mjs";
 import "../_libs/supabase__functions-js.mjs";
-import "./sheets.server-e71hR5JP.mjs";
+import "./sheets.server-OHrRPQqp.mjs";
 import "../_libs/zod.mjs";
 function ClientesPage() {
   const {

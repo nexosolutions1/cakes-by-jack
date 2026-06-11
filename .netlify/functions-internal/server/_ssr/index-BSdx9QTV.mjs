@@ -1,18 +1,19 @@
 import { j as jsxRuntimeExports, r as reactExports } from "../_libs/react.mjs";
-import { w as setupQO, l as listPedidos, a as listClientes, b as listProdutos } from "./router-8vuZ9gUy.mjs";
+import { y as setupQO, l as listPedidos, a as listClientes, b as listProdutos } from "./router-DrEiKWY7.mjs";
 import { L as Link } from "../_libs/tanstack__react-router.mjs";
 import { c as useSuspenseQuery, u as useQuery, q as queryOptions } from "../_libs/tanstack__react-query.mjs";
-import { A as AppLayout, S as Skeleton } from "./app-layout-CldwD0on.mjs";
+import { A as AppLayout, S as Skeleton } from "./app-layout-Bh3N7kPK.mjs";
 import { C as Card, a as CardHeader, b as CardTitle, c as CardContent } from "./card-Bbtrid8Y.mjs";
 import { B as Button } from "./brand-logo-3iPsG8o9.mjs";
 import { B as Badge } from "./badge-PNZ8Owsm.mjs";
+import { h as heroCake } from "./catalogo-hero-bolo-DaHLwWTF.mjs";
 import { p as parseDateSafe, b as parseMoney, v as valorRecebido, a as formatBRL, f as formatDateBR } from "./format-DkCAcujl.mjs";
 import "../_libs/sonner.mjs";
 import "../_libs/seroval.mjs";
-import { S as Sparkles, f as Clock, p as ClipboardList, d as TrendingUp, e as DollarSign, q as CalendarDays, U as Users, A as ArrowUpRight } from "../_libs/lucide-react.mjs";
+import { S as Sparkles, g as Clock, p as ClipboardList, e as TrendingUp, f as DollarSign, q as CalendarDays, U as Users, A as ArrowUpRight } from "../_libs/lucide-react.mjs";
 import { R as ResponsiveContainer, L as LineChart, X as XAxis, Y as YAxis, T as Tooltip, a as Line, B as BarChart, b as Bar, P as PieChart, c as Pie, C as Cell } from "../_libs/recharts.mjs";
 import "../_libs/tanstack__query-core.mjs";
-import "./server-DS2HpPV2.mjs";
+import "./server-BK6vLts3.mjs";
 import "node:async_hooks";
 import "../_libs/h3-v2.mjs";
 import "../_libs/rou3.mjs";
@@ -38,7 +39,7 @@ import "../_libs/iceberg-js.mjs";
 import "../_libs/supabase__auth-js.mjs";
 import "tslib";
 import "../_libs/supabase__functions-js.mjs";
-import "./sheets.server-e71hR5JP.mjs";
+import "./sheets.server-OHrRPQqp.mjs";
 import "../_libs/zod.mjs";
 import "../_libs/radix-ui__react-slot.mjs";
 import "../_libs/radix-ui__react-compose-refs.mjs";
@@ -97,7 +98,6 @@ import "../_libs/d3-format.mjs";
 import "../_libs/recharts-scale.mjs";
 import "../_libs/decimal.js-light.mjs";
 import "../_libs/eventemitter3.mjs";
-const banner = "/assets/dashboard-banner-COH4NroF.jpg";
 function DashboardPage() {
   const {
     data: setup
@@ -223,7 +223,11 @@ function DashboardContent() {
     tint: "bg-accent text-rose-deep"
   }, {
     label: "Clientes",
-    value: clientes.length,
+    value: new Set(clientes.map((c) => {
+      const whats = String(c.whatsapp || "").replace(/\D+/g, "");
+      const nome = String(c.nome || "").trim().toLowerCase();
+      return whats || nome;
+    })).size,
     icon: Users,
     tint: "bg-accent text-foreground"
   }, {
@@ -235,7 +239,7 @@ function DashboardContent() {
   const proximos = [...ativos].filter((p) => p.status !== "Entregue" && p.dataEntrega).sort((a, b) => +(parseDateSafe(a.dataEntrega) ?? /* @__PURE__ */ new Date(8e15)) - +(parseDateSafe(b.dataEntrega) ?? /* @__PURE__ */ new Date(8e15))).slice(0, 5);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-6", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative overflow-hidden rounded-3xl shadow-card", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: banner, alt: "", className: "h-44 w-full object-cover md:h-52" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: heroCake, alt: "", className: "h-44 w-full object-cover md:h-52" }),
       /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "absolute inset-0 bg-gradient-to-r from-primary/85 via-primary/55 to-transparent" }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "absolute inset-0 flex flex-col justify-center p-6 md:p-8 text-primary-foreground", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs uppercase tracking-[0.25em] opacity-90", children: "Cakes by Jack" }),

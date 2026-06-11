@@ -1,18 +1,17 @@
 import { r as reactExports, j as jsxRuntimeExports } from "../_libs/react.mjs";
 import { u as useQuery, b as useQueryClient, a as useMutation } from "../_libs/tanstack__react-query.mjs";
 import { u as useServerFn } from "./useServerFn-DL2oePlL.mjs";
-import { A as AppLayout } from "./app-layout-CldwD0on.mjs";
+import { A as AppLayout } from "./app-layout-Bh3N7kPK.mjs";
 import { C as Card, c as CardContent } from "./card-Bbtrid8Y.mjs";
 import { B as Button, I as Input } from "./brand-logo-3iPsG8o9.mjs";
 import { L as Label } from "./label-tl_MnXN1.mjs";
-import { T as Textarea } from "./textarea-CYCFuD-O.mjs";
 import { B as Badge } from "./badge-PNZ8Owsm.mjs";
 import { S as Select, a as SelectTrigger, b as SelectValue, c as SelectContent, d as SelectItem } from "./select-CmacHktB.mjs";
 import { D as Dialog, a as DialogTrigger, b as DialogContent, c as DialogHeader, d as DialogTitle, e as DialogFooter } from "./dialog-DsEyClLt.mjs";
-import { j as listFichas, b as listProdutos, k as upsertFicha, f as listInsumos, m as listCustosAdicionais } from "./router-8vuZ9gUy.mjs";
+import { k as listFichas, b as listProdutos, m as deleteFicha, o as upsertFicha, f as listInsumos, p as listCustosAdicionais } from "./router-DrEiKWY7.mjs";
 import { t as toast } from "../_libs/sonner.mjs";
 import "../_libs/seroval.mjs";
-import { h as ChefHat, c as Plus, L as LoaderCircle } from "../_libs/lucide-react.mjs";
+import { i as ChefHat, c as Plus, T as Trash2, L as LoaderCircle } from "../_libs/lucide-react.mjs";
 import "../_libs/tanstack__query-core.mjs";
 import "../_libs/tanstack__react-router.mjs";
 import "../_libs/tanstack__router-core.mjs";
@@ -71,7 +70,7 @@ import "../_libs/radix-ui__number.mjs";
 import "../_libs/radix-ui__react-collection.mjs";
 import "../_libs/radix-ui__react-direction.mjs";
 import "../_libs/radix-ui__react-use-previous.mjs";
-import "./server-DS2HpPV2.mjs";
+import "./server-BK6vLts3.mjs";
 import "node:async_hooks";
 import "../_libs/h3-v2.mjs";
 import "../_libs/rou3.mjs";
@@ -84,7 +83,7 @@ import "../_libs/supabase__storage-js.mjs";
 import "../_libs/iceberg-js.mjs";
 import "../_libs/supabase__auth-js.mjs";
 import "../_libs/supabase__functions-js.mjs";
-import "./sheets.server-e71hR5JP.mjs";
+import "./sheets.server-OHrRPQqp.mjs";
 import "../_libs/zod.mjs";
 function parseMoney(value) {
   if (value === void 0 || value === null) return 0;
@@ -123,6 +122,8 @@ function FichaPage() {
 function FichaCard({
   ficha
 }) {
+  const remove = useServerFn(deleteFicha);
+  const qc = useQueryClient();
   const margem = Number(ficha.margem) || 0;
   const cor = margem >= 50 ? "bg-success/15 text-success" : margem >= 25 ? "bg-warning/20 text-warning" : "bg-destructive/15 text-destructive";
   return /* @__PURE__ */ jsxRuntimeExports.jsx(Card, { className: "border-border/60 shadow-card", children: /* @__PURE__ */ jsxRuntimeExports.jsxs(CardContent, { className: "space-y-3 p-5", children: [
@@ -131,9 +132,23 @@ function FichaCard({
         /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-display text-lg font-semibold", children: ficha.produtoNome }),
         /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "whitespace-pre-line text-xs text-muted-foreground", children: ficha.ingredientes })
       ] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsxs(Badge, { className: cor, children: [
-        margem.toFixed(1),
-        "% margem"
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(Badge, { className: cor, children: [
+          margem.toFixed(1),
+          "% margem"
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { variant: "ghost", size: "icon", className: "h-8 w-8 text-red-500 hover:text-red-600", onClick: async () => {
+          if (!confirm(`Excluir ficha "${ficha.produtoNome}"?`)) return;
+          await remove({
+            data: {
+              id: ficha.id
+            }
+          });
+          await qc.invalidateQueries({
+            queryKey: ["fichas"]
+          });
+          toast.success("Ficha excluída");
+        }, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Trash2, { className: "h-4 w-4" }) })
       ] })
     ] }),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-3 gap-2 rounded-xl bg-muted/40 p-3 text-center text-sm", children: [
@@ -177,11 +192,15 @@ function FichaDialog({
     precoVenda: 0,
     observacoes: ""
   });
+  const [novoInsumo, setNovoInsumo] = reactExports.useState({
+    insumoId: "",
+    quantidade: 1
+  });
   const produto = produtos.find((p) => p.id === form.produtoId);
+  const ingredientesSelecionados = form.ingredientes.split("\n").map((linha) => linha.trim()).filter(Boolean);
   function calcularCustoIngredientes() {
-    const linhas = form.ingredientes.split("\n").map((linha) => linha.trim()).filter(Boolean);
     let total = 0;
-    for (const linha of linhas) {
+    for (const linha of ingredientesSelecionados) {
       const qtdMatch = linha.match(/(\d+[,.]?\d*)\s*$/);
       const quantidade = qtdMatch ? Number(qtdMatch[1].replace(",", ".")) : 1;
       const nomeLinha = normalizeText(linha.replace(/(\d+[,.]?\d*)\s*$/, "").trim());
@@ -194,6 +213,30 @@ function FichaDialog({
       }
     }
     return total;
+  }
+  function adicionarInsumo() {
+    const insumo = insumos.find((i) => i.id === novoInsumo.insumoId);
+    if (!insumo) {
+      toast.error("Selecione um insumo");
+      return;
+    }
+    const quantidade = Number(novoInsumo.quantidade) || 1;
+    const linha = `${insumo.nome} ${quantidade}`;
+    setForm({
+      ...form,
+      ingredientes: [...ingredientesSelecionados, linha].join("\n")
+    });
+    setNovoInsumo({
+      insumoId: "",
+      quantidade: 1
+    });
+  }
+  function removerIngrediente(index) {
+    const novasLinhas = ingredientesSelecionados.filter((_, i) => i !== index);
+    setForm({
+      ...form,
+      ingredientes: novasLinhas.join("\n")
+    });
   }
   const custoIngredientes = calcularCustoIngredientes();
   const custoAdicional = custosAdicionais.reduce((acc, c) => acc + parseMoney(c.valor), 0);
@@ -220,35 +263,54 @@ function FichaDialog({
     },
     onError: (e) => toast.error(e.message)
   });
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs(DialogContent, { className: "max-w-xl", children: [
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(DialogContent, { className: "max-h-[92vh] max-w-2xl overflow-y-auto", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(DialogHeader, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(DialogTitle, { className: "font-display text-2xl", children: "Ficha Técnica" }) }),
-    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid gap-3", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { children: "Produto" }),
-      /* @__PURE__ */ jsxRuntimeExports.jsxs(Select, { value: form.produtoId, onValueChange: (v) => {
-        const p = produtos.find((x) => x.id === v);
-        setForm({
-          ...form,
-          produtoId: v,
-          precoVenda: p ? Number(String(p.preco).replace(",", ".")) : 0
-        });
-      }, children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx(SelectTrigger, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(SelectValue, { placeholder: "Selecione" }) }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx(SelectContent, { className: "max-h-72", children: produtos.map((p) => /* @__PURE__ */ jsxRuntimeExports.jsxs(SelectItem, { value: p.id, children: [
-          p.categoria,
-          " • ",
-          p.tipo,
-          " • ",
-          p.nome
-        ] }, p.id)) })
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid gap-4", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid gap-2", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { children: "Produto" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(Select, { value: form.produtoId, onValueChange: (v) => {
+          const p = produtos.find((x) => x.id === v);
+          setForm({
+            ...form,
+            produtoId: v,
+            precoVenda: p ? Number(String(p.preco).replace(",", ".")) : 0
+          });
+        }, children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(SelectTrigger, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(SelectValue, { placeholder: "Selecione" }) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(SelectContent, { className: "max-h-72", children: produtos.map((p) => /* @__PURE__ */ jsxRuntimeExports.jsxs(SelectItem, { value: p.id, children: [
+            p.categoria,
+            " • ",
+            p.tipo,
+            " • ",
+            p.nome
+          ] }, p.id)) })
+        ] })
       ] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { children: "Ingredientes & quantidades" }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(Textarea, { rows: 5, placeholder: `Digite um insumo por linha. Ex:
-Leite Condensado 1
-Leite Ninho 2
-Morango 3`, value: form.ingredientes, onChange: (e) => setForm({
-        ...form,
-        ingredientes: e.target.value
-      }) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "rounded-xl border border-border/60 bg-card/60 p-3", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { children: "Ingredientes da receita" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-2 grid gap-2 sm:grid-cols-[1fr_120px_auto]", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(Select, { value: novoInsumo.insumoId, onValueChange: (v) => setNovoInsumo({
+            ...novoInsumo,
+            insumoId: v
+          }), children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(SelectTrigger, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(SelectValue, { placeholder: "Selecione o insumo" }) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(SelectContent, { className: "max-h-72", children: insumos.map((i) => /* @__PURE__ */ jsxRuntimeExports.jsxs(SelectItem, { value: i.id, children: [
+              i.nome,
+              " — R$ ",
+              parseMoney(i.valorUnitario).toFixed(2)
+            ] }, i.id)) })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Input, { type: "number", min: 0.01, step: "0.01", value: novoInsumo.quantidade, onChange: (e) => setNovoInsumo({
+            ...novoInsumo,
+            quantidade: Number(e.target.value) || 1
+          }) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { type: "button", onClick: adicionarInsumo, className: "bg-gradient-primary", children: "Adicionar" })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-3 space-y-2", children: ingredientesSelecionados.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "rounded-lg bg-muted/40 p-3 text-sm text-muted-foreground", children: "Nenhum ingrediente adicionado ainda." }) : ingredientesSelecionados.map((linha, index) => /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between rounded-lg border border-border/60 bg-background px-3 py-2 text-sm", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: linha }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { type: "button", size: "sm", variant: "ghost", onClick: () => removerIngrediente(index), className: "text-destructive hover:text-destructive", children: "Remover" })
+        ] }, `${linha}-${index}`)) })
+      ] }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-3 gap-2 rounded-xl bg-rose-soft/40 p-3 text-sm", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
           "Ingredientes:",
@@ -310,7 +372,7 @@ Morango 3`, value: form.ingredientes, onChange: (e) => setForm({
         ] })
       ] })
     ] }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(DialogFooter, { children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Button, { disabled: !form.produtoId || mut.isPending, onClick: () => mut.mutate(), className: "bg-gradient-primary", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(DialogFooter, { children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Button, { disabled: !form.produtoId || ingredientesSelecionados.length === 0 || mut.isPending, onClick: () => mut.mutate(), className: "bg-gradient-primary", children: [
       mut.isPending && /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { className: "h-4 w-4 animate-spin" }),
       "Salvar ficha"
     ] }) })

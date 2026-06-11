@@ -2,6 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
+import heroCake from "@/assets/catalogo-hero-bolo.png";
+import jackPremium from "@/assets/jack-confeitaria-premium.png";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -44,10 +46,12 @@ function PublicCatalog() {
     queryKey: ["produtos-publico"],
     queryFn: () => listProdutosPublico(),
   });
+
   const { data: config } = useQuery({
     queryKey: ["config"],
     queryFn: () => getConfig(),
   });
+
   const [search, setSearch] = useState("");
   const [cat, setCat] = useState("Todos");
 
@@ -66,23 +70,102 @@ function PublicCatalog() {
     [produtos, cat, search],
   );
 
+  const whatsappUrl =
+    "https://wa.me/553597423115?text=Ol%C3%A1%20Jack!%20Vi%20seu%20cat%C3%A1logo%20online%20e%20gostaria%20de%20fazer%20uma%20encomenda.";
+
+  const instagramUrl = "https://www.instagram.com/cakesbyjack_";
+
   return (
     <div className="min-h-screen bg-background">
-      <header className="bg-gradient-rose border-b border-border">
-        <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-6">
-          <BrandLogo size={56} />
-          <div>
-            <h1 className="font-display text-2xl font-semibold leading-tight text-chocolate md:text-3xl">
-              {config?.nome || "Cakes by Jack"}
-            </h1>
-            <p className="text-xs uppercase tracking-[0.2em] text-rose-deep">
-              Confeitaria Artesanal
+      <section className="relative overflow-hidden border-b border-border bg-gradient-rose">
+        <div className="absolute inset-0 opacity-35">
+          <img src={heroCake} alt="" className="h-full w-full object-cover object-center" />
+        </div>
+
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/85 via-primary/45 to-background/20" />
+
+        <div className="relative mx-auto grid max-w-6xl gap-8 px-4 py-10 md:grid-cols-[1.2fr_0.8fr] md:items-center md:py-14">
+          <div className="text-primary-foreground">
+            <div className="mb-5 flex items-center gap-4">
+              <BrandLogo size={64} />
+              <div>
+                <p className="text-xs uppercase tracking-[0.35em] opacity-90">
+                  Confeitaria Artesanal
+                </p>
+                <h1 className="font-display text-4xl font-semibold leading-tight md:text-6xl">
+                  {config?.nome || "Cakes By Jack"}
+                </h1>
+              </div>
+            </div>
+
+            <p className="max-w-xl text-base leading-relaxed opacity-95 md:text-lg">
+              Bolos, tortas e doces artesanais feitos sob encomenda, com carinho,
+              capricho e aquele toque especial para adoçar seus melhores momentos.
             </p>
+
+            <div className="mt-6 flex flex-wrap gap-3">
+              <a href={whatsappUrl} target="_blank" rel="noreferrer">
+                <Button className="bg-white text-primary shadow-soft hover:bg-white/90">
+                  Fazer encomenda pelo WhatsApp
+                </Button>
+              </a>
+
+              <a href={instagramUrl} target="_blank" rel="noreferrer">
+                <Button variant="outline" className="border-white/70 bg-white/10 text-white hover:bg-white/20">
+                  Ver Instagram
+                </Button>
+              </a>
+            </div>
+          </div>
+
+          <div className="rounded-[2rem] border border-white/40 bg-white/20 p-3 shadow-elevated backdrop-blur">
+            <img
+              src={jackPremium}
+              alt="Jack, confeiteira da Cakes By Jack"
+              className="aspect-[4/5] w-full rounded-[1.5rem] object-cover"
+            />
           </div>
         </div>
-      </header>
+      </section>
 
-      <div className="mx-auto max-w-6xl px-4 py-6">
+      <section className="mx-auto max-w-6xl px-4 py-8">
+        <div className="mb-8 rounded-3xl border border-border bg-card p-5 shadow-card md:p-6">
+          <div className="grid gap-4 md:grid-cols-[1fr_auto_auto] md:items-center">
+            <div>
+              <p className="text-xs uppercase tracking-[0.25em] text-rose-deep">
+                Sobre a Jack
+              </p>
+              <h2 className="font-display mt-1 text-2xl font-semibold text-chocolate">
+                Feito com carinho, para momentos especiais.
+              </h2>
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+                Olá, eu sou a Jack! Sou apaixonada por confeitaria artesanal e
+                preparo cada encomenda com atenção aos detalhes, ingredientes
+                selecionados e muito amor.
+              </p>
+            </div>
+
+            <a href={whatsappUrl} target="_blank" rel="noreferrer">
+              <Button className="w-full bg-gradient-primary shadow-soft md:w-auto">
+                WhatsApp
+              </Button>
+            </a>
+
+            <a href={instagramUrl} target="_blank" rel="noreferrer">
+              <Button variant="outline" className="w-full md:w-auto">
+                Instagram
+              </Button>
+            </a>
+          </div>
+        </div>
+
+        <div className="mb-5">
+          <p className="text-xs uppercase tracking-[0.25em] text-rose-deep">Catálogo</p>
+          <h2 className="font-display text-3xl font-semibold text-chocolate">
+            Escolha sua delícia
+          </h2>
+        </div>
+
         <div className="mb-5 flex flex-col gap-3 md:flex-row md:items-center">
           <Input
             placeholder="Buscar produto..."
@@ -90,6 +173,7 @@ function PublicCatalog() {
             onChange={(e) => setSearch(e.target.value)}
             className="max-w-sm bg-card"
           />
+
           <div className="flex flex-wrap gap-2">
             {categorias.map((c) => (
               <button
@@ -118,7 +202,7 @@ function PublicCatalog() {
             Nenhum produto encontrado.
           </p>
         )}
-      </div>
+      </section>
     </div>
   );
 }

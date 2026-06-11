@@ -121,16 +121,48 @@ function PedidoCard({ pedido }: { pedido: Pedido }) {
   const update = useServerFn(updatePedidoStatus);
   const qc = useQueryClient();
   const [payOpen, setPayOpen] = useState(false);
+
+  function abrirWhatsappConfirmacao() {
+const phone = String((pedido as any).whatsapp || "").replace(/\D+/g, "");
+
+    if (!phone) {
+      toast.warning("Pedido confirmado, mas esse cliente não tem WhatsApp cadastrado.");
+      return;
+    }
+
+    const msg = [
+      `Olá, ${pedido.clienteNome}! ❤️`,
+      "",
+      "Seu pedido na Cakes By Jack foi confirmado!",
+      "",
+      `Pedido: ${pedido.numero}`,
+      `Produto: ${pedido.produto}`,
+      `Entrega: ${formatDateBR(pedido.dataEntrega)} ${pedido.horaEntrega || ""}`,
+      `Valor total: ${formatBRL(pedido.valorTotal)}`,
+      `Entrada: ${formatBRL(pedido.entrada)}`,
+      `Saldo: ${formatBRL(pedido.saldo || pedido.valorTotal)}`,
+      "",
+      "Obrigada pela preferência! 🍰",
+    ].join("\n");
+
+    window.open(`https://wa.me/55${phone}?text=${encodeURIComponent(msg)}`, "_blank");
+  }
+
   const mut = useMutation({
     mutationFn: (status: string) => update({ data: { id: pedido.id, status } }),
     onSuccess: (_d, status) => {
       toast.success(
         status === "Confirmado"
-          ? "Pedido confirmado — agora aparece no calendário e painel financeiro"
+          ? "Pedido confirmado — WhatsApp aberto para envio"
           : status === "Recusado"
             ? "Pedido recusado"
             : "Status atualizado",
       );
+
+      if (status === "Confirmado") {
+        abrirWhatsappConfirmacao();
+      }
+
       qc.invalidateQueries();
     },
     onError: (e: Error) => toast.error(e.message),
@@ -162,7 +194,9 @@ function PedidoCard({ pedido }: { pedido: Pedido }) {
             )}
             <Badge className={sitColor}>{pedido.situacaoPagamento || "Não pago"}</Badge>
           </div>
+
           <p className="text-sm text-muted-foreground">{pedido.produto}</p>
+
           <div className="grid grid-cols-2 gap-x-3 gap-y-1 pt-1 text-xs text-muted-foreground sm:flex sm:flex-wrap sm:gap-x-4">
             <span>
               Entrega:{" "}
@@ -176,6 +210,7 @@ function PedidoCard({ pedido }: { pedido: Pedido }) {
             <span>Saldo: {formatBRL(pedido.saldo || pedido.valorTotal)}</span>
           </div>
         </div>
+
         <div className="flex w-full flex-wrap items-center gap-2 lg:w-auto">
           {isPending && (
             <>
@@ -188,6 +223,7 @@ function PedidoCard({ pedido }: { pedido: Pedido }) {
                 {mut.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
                 Confirmar
               </Button>
+
               <Button
                 size="sm"
                 variant="outline"
@@ -199,6 +235,7 @@ function PedidoCard({ pedido }: { pedido: Pedido }) {
               </Button>
             </>
           )}
+
           <Button
             size="sm"
             variant="outline"
@@ -207,6 +244,7 @@ function PedidoCard({ pedido }: { pedido: Pedido }) {
           >
             <Wallet className="h-3.5 w-3.5" /> Pagamento
           </Button>
+
           <Select value={pedido.status} onValueChange={(v) => mut.mutate(v)}>
             <SelectTrigger className="w-full bg-card sm:w-44">
               <SelectValue />
@@ -220,6 +258,7 @@ function PedidoCard({ pedido }: { pedido: Pedido }) {
             </SelectContent>
           </Select>
         </div>
+
         <Dialog open={payOpen} onOpenChange={setPayOpen}>
           {payOpen && (
             <EditPagamentoDialog pedido={pedido} onDone={() => setPayOpen(false)} />

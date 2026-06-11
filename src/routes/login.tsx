@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { BrandLogo } from "@/components/brand-logo";
 import { Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
+import jackPremium from "@/assets/jack-confeitaria-premium.png";
 import { NexoSignature } from "@/components/nexo-signature";
 
 export const Route = createFileRoute("/login")({
@@ -49,12 +50,15 @@ function LoginPage() {
   }
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-rose-soft via-cream-soft to-rose-light/60 px-4 py-10">
-      {/* Decorative glow */}
-      <div className="pointer-events-none absolute -top-32 -left-32 h-80 w-80 rounded-full bg-primary/25 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-gold/20 blur-3xl" />
-      <div className="pointer-events-none absolute top-1/3 right-1/4 h-40 w-40 rounded-full bg-rose-deep/15 blur-2xl" />
+<div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-chocolate px-4 py-10">
+  <img
+    src={jackPremium}
+    alt=""
+    className="absolute inset-0 h-full w-full object-cover opacity-35 blur-sm scale-105"
+  />
 
+  <div className="absolute inset-0 bg-gradient-to-br from-rose-soft/80 via-cream-soft/75 to-primary/50" />
+  
       <Card className="relative z-10 w-full max-w-md border-2 border-white/60 bg-white/80 shadow-elevated backdrop-blur-xl">
         <CardContent className="px-6 py-8 sm:px-10 sm:py-10">
           <div className="flex flex-col items-center text-center">

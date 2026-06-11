@@ -1,10 +1,10 @@
 import { r as reactExports, j as jsxRuntimeExports } from "../_libs/react.mjs";
 import { u as useQuery } from "../_libs/tanstack__react-query.mjs";
-import { A as AppLayout } from "./app-layout-CldwD0on.mjs";
+import { A as AppLayout } from "./app-layout-Bh3N7kPK.mjs";
 import { C as Card, c as CardContent } from "./card-Bbtrid8Y.mjs";
 import { B as Badge } from "./badge-PNZ8Owsm.mjs";
 import { I as Input } from "./brand-logo-3iPsG8o9.mjs";
-import { b as listProdutos } from "./router-8vuZ9gUy.mjs";
+import { b as listProdutos } from "./router-DrEiKWY7.mjs";
 import "../_libs/sonner.mjs";
 import "../_libs/seroval.mjs";
 import { b as Cake } from "../_libs/lucide-react.mjs";
@@ -60,7 +60,7 @@ import "../_libs/radix-ui__react-use-size.mjs";
 import "../_libs/@radix-ui/react-visually-hidden+[...].mjs";
 import "./nexo-signature-6kPfTCBv.mjs";
 import "../_libs/tailwind-merge.mjs";
-import "./server-DS2HpPV2.mjs";
+import "./server-BK6vLts3.mjs";
 import "node:async_hooks";
 import "../_libs/h3-v2.mjs";
 import "../_libs/rou3.mjs";
@@ -73,7 +73,7 @@ import "../_libs/supabase__storage-js.mjs";
 import "../_libs/iceberg-js.mjs";
 import "../_libs/supabase__auth-js.mjs";
 import "../_libs/supabase__functions-js.mjs";
-import "./sheets.server-e71hR5JP.mjs";
+import "./sheets.server-OHrRPQqp.mjs";
 import "../_libs/zod.mjs";
 function ProdutosPage() {
   const {

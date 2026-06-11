@@ -1,13 +1,15 @@
 import { r as reactExports, j as jsxRuntimeExports } from "../_libs/react.mjs";
 import { u as useQuery, a as useMutation } from "../_libs/tanstack__react-query.mjs";
 import { u as useServerFn } from "./useServerFn-DL2oePlL.mjs";
-import { a as BrandLogo, I as Input, B as Button } from "./brand-logo-3iPsG8o9.mjs";
+import { h as heroCake } from "./catalogo-hero-bolo-DaHLwWTF.mjs";
+import { j as jackPremium } from "./jack-confeitaria-premium-CpcJpWBm.mjs";
+import { a as BrandLogo, B as Button, I as Input } from "./brand-logo-3iPsG8o9.mjs";
 import { C as Card, c as CardContent } from "./card-Bbtrid8Y.mjs";
 import { L as Label } from "./label-tl_MnXN1.mjs";
 import { T as Textarea } from "./textarea-CYCFuD-O.mjs";
 import { B as Badge } from "./badge-PNZ8Owsm.mjs";
 import { D as Dialog, a as DialogTrigger, b as DialogContent, c as DialogHeader, d as DialogTitle, e as DialogFooter } from "./dialog-DsEyClLt.mjs";
-import { x as listProdutosPublico, o as getConfig, y as createPedidoPublico } from "./router-8vuZ9gUy.mjs";
+import { z as listProdutosPublico, q as getConfig, A as createPedidoPublico } from "./router-DrEiKWY7.mjs";
 import { p as publicImageUrl } from "./image-storage-C3FCaYPT.mjs";
 import { a as formatBRL, b as parseMoney } from "./format-DkCAcujl.mjs";
 import { t as toast } from "../_libs/sonner.mjs";
@@ -55,7 +57,7 @@ import "../_libs/get-nonce.mjs";
 import "../_libs/use-sidecar.mjs";
 import "../_libs/use-callback-ref.mjs";
 import "../_libs/aria-hidden.mjs";
-import "./server-DS2HpPV2.mjs";
+import "./server-BK6vLts3.mjs";
 import "node:async_hooks";
 import "../_libs/h3-v2.mjs";
 import "../_libs/rou3.mjs";
@@ -68,7 +70,7 @@ import "../_libs/supabase__storage-js.mjs";
 import "../_libs/iceberg-js.mjs";
 import "../_libs/supabase__auth-js.mjs";
 import "../_libs/supabase__functions-js.mjs";
-import "./sheets.server-e71hR5JP.mjs";
+import "./sheets.server-OHrRPQqp.mjs";
 import "../_libs/zod.mjs";
 function PublicCatalog() {
   const {
@@ -87,15 +89,44 @@ function PublicCatalog() {
   const [cat, setCat] = reactExports.useState("Todos");
   const categorias = reactExports.useMemo(() => ["Todos", ...Array.from(new Set(produtos.map((p) => p.categoria).filter(Boolean)))], [produtos]);
   const filtered = reactExports.useMemo(() => produtos.filter((p) => (cat === "Todos" || p.categoria === cat) && p.nome.toLowerCase().includes(search.toLowerCase())), [produtos, cat, search]);
+  const whatsappUrl = "https://wa.me/553597423115?text=Ol%C3%A1%20Jack!%20Vi%20seu%20cat%C3%A1logo%20online%20e%20gostaria%20de%20fazer%20uma%20encomenda.";
+  const instagramUrl = "https://www.instagram.com/cakesbyjack_";
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-h-screen bg-background", children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx("header", { className: "bg-gradient-rose border-b border-border", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto flex max-w-6xl items-center gap-4 px-4 py-6", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx(BrandLogo, { size: 56 }),
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-2xl font-semibold leading-tight text-chocolate md:text-3xl", children: config?.nome || "Cakes by Jack" }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs uppercase tracking-[0.2em] text-rose-deep", children: "Confeitaria Artesanal" })
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "relative overflow-hidden border-b border-border bg-gradient-rose", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "absolute inset-0 opacity-35", children: /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: heroCake, alt: "", className: "h-full w-full object-cover object-center" }) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "absolute inset-0 bg-gradient-to-r from-primary/85 via-primary/45 to-background/20" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative mx-auto grid max-w-6xl gap-8 px-4 py-10 md:grid-cols-[1.2fr_0.8fr] md:items-center md:py-14", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-primary-foreground", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-5 flex items-center gap-4", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(BrandLogo, { size: 64 }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs uppercase tracking-[0.35em] opacity-90", children: "Confeitaria Artesanal" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-4xl font-semibold leading-tight md:text-6xl", children: config?.nome || "Cakes By Jack" })
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "max-w-xl text-base leading-relaxed opacity-95 md:text-lg", children: "Bolos, tortas e doces artesanais feitos sob encomenda, com carinho, capricho e aquele toque especial para adoçar seus melhores momentos." }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-6 flex flex-wrap gap-3", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("a", { href: whatsappUrl, target: "_blank", rel: "noreferrer", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { className: "bg-white text-primary shadow-soft hover:bg-white/90", children: "Fazer encomenda pelo WhatsApp" }) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("a", { href: instagramUrl, target: "_blank", rel: "noreferrer", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { variant: "outline", className: "border-white/70 bg-white/10 text-white hover:bg-white/20", children: "Ver Instagram" }) })
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "rounded-[2rem] border border-white/40 bg-white/20 p-3 shadow-elevated backdrop-blur", children: /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: jackPremium, alt: "Jack, confeiteira da Cakes By Jack", className: "aspect-[4/5] w-full rounded-[1.5rem] object-cover" }) })
       ] })
-    ] }) }),
-    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto max-w-6xl px-4 py-6", children: [
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "mx-auto max-w-6xl px-4 py-8", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mb-8 rounded-3xl border border-border bg-card p-5 shadow-card md:p-6", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid gap-4 md:grid-cols-[1fr_auto_auto] md:items-center", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs uppercase tracking-[0.25em] text-rose-deep", children: "Sobre a Jack" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display mt-1 text-2xl font-semibold text-chocolate", children: "Feito com carinho, para momentos especiais." }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground", children: "Olá, eu sou a Jack! Sou apaixonada por confeitaria artesanal e preparo cada encomenda com atenção aos detalhes, ingredientes selecionados e muito amor." })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("a", { href: whatsappUrl, target: "_blank", rel: "noreferrer", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { className: "w-full bg-gradient-primary shadow-soft md:w-auto", children: "WhatsApp" }) }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("a", { href: instagramUrl, target: "_blank", rel: "noreferrer", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { variant: "outline", className: "w-full md:w-auto", children: "Instagram" }) })
+      ] }) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-5", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs uppercase tracking-[0.25em] text-rose-deep", children: "Catálogo" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-3xl font-semibold text-chocolate", children: "Escolha sua delícia" })
+      ] }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-5 flex flex-col gap-3 md:flex-row md:items-center", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx(Input, { placeholder: "Buscar produto...", value: search, onChange: (e) => setSearch(e.target.value), className: "max-w-sm bg-card" }),
         /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-wrap gap-2", children: categorias.map((c) => /* @__PURE__ */ jsxRuntimeExports.jsx("button", { onClick: () => setCat(c), className: `rounded-full border px-3 py-1 text-xs font-medium transition ${cat === c ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground hover:border-primary/40"}`, children: c }, c)) })

@@ -3,9 +3,9 @@ import { Q as QueryClientProvider, u as useQuery, q as queryOptions } from "../_
 import { c as createRouter, a as createRootRouteWithContext, u as useRouter, L as Link, O as Outlet, H as HeadContent, S as Scripts, b as createFileRoute, l as lazyRouteComponent } from "../_libs/tanstack__react-router.mjs";
 import { r as reactExports, j as jsxRuntimeExports } from "../_libs/react.mjs";
 import { T as Toaster$1 } from "../_libs/sonner.mjs";
-import { c as createServerFn, T as TSS_SERVER_FUNCTION, g as getServerFnById } from "./server-DS2HpPV2.mjs";
+import { c as createServerFn, T as TSS_SERVER_FUNCTION, g as getServerFnById } from "./server-BK6vLts3.mjs";
 import { c as createClient } from "../_libs/supabase__supabase-js.mjs";
-import { r as readTable } from "./sheets.server-e71hR5JP.mjs";
+import { r as readTable } from "./sheets.server-OHrRPQqp.mjs";
 import { o as objectType, s as stringType, n as numberType, e as enumType } from "../_libs/zod.mjs";
 import "../_libs/tanstack__router-core.mjs";
 import "../_libs/tanstack__history.mjs";
@@ -32,8 +32,8 @@ import "../_libs/iceberg-js.mjs";
 import "../_libs/supabase__auth-js.mjs";
 import "tslib";
 import "../_libs/supabase__functions-js.mjs";
-const appCss = "/assets/styles-D3kGcx0y.css";
-const logo = "/assets/favicon-_f5vaHWQ.jpeg";
+const appCss = "/assets/styles-DJ89l8nq.css";
+const favicon = "/assets/favicon-_f5vaHWQ.jpeg";
 function reportLovableError(error, context = {}) {
   if (typeof window === "undefined") return;
   window.__lovableEvents?.captureException?.(
@@ -185,6 +185,16 @@ const updateInsumoEstoque = createServerFn({
   id: stringType(),
   estoqueAtual: numberType()
 })).handler(createSsrRpc("279013415d8879536663bc71bf748c2c0049951730b66306c6e37bb4c6410fab"));
+const deleteInsumo = createServerFn({
+  method: "POST"
+}).inputValidator(objectType({
+  id: stringType().min(1)
+})).handler(createSsrRpc("d1be2aafeeaa8a79de7a31bfad1ae4a45a0e90930e22072051f3b3a2748a9e54"));
+const deleteFicha = createServerFn({
+  method: "POST"
+}).inputValidator(objectType({
+  id: stringType().min(1)
+})).handler(createSsrRpc("82980e4041cc9f757b373b14710e9c4fe87db2bf29b4a2a9836d43393791f7f5"));
 const listFichas = createServerFn({
   method: "GET"
 }).handler(createSsrRpc("a91e44fdae2e28f9adad8d93a522aab354ab117801ad67604577ec2e113ecce2"));
@@ -394,8 +404,8 @@ const Route$h = createRootRouteWithContext()({
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", type: "image/png", href: logo.url },
-      { rel: "apple-touch-icon", href: logo.url },
+      { rel: "icon", type: "image/jpeg", href: "/src/assets/cakesbyjack logo.jpeg" },
+      { rel: "apple-touch-icon", href: favicon },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "" },
       {
@@ -410,7 +420,7 @@ const Route$h = createRootRouteWithContext()({
   errorComponent: ErrorComponent
 });
 function RootShell({ children }) {
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs("html", { lang: "en", children: [
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("html", { lang: "pt-BR", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx("head", { children: /* @__PURE__ */ jsxRuntimeExports.jsx(HeadContent, {}) }),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("body", { children: [
       children,
@@ -425,7 +435,7 @@ function RootComponent() {
     /* @__PURE__ */ jsxRuntimeExports.jsx(Toaster, { richColors: true, position: "top-right" })
   ] }) });
 }
-const $$splitComponentImporter$e = () => import("./setup-l_FH_JoB.mjs");
+const $$splitComponentImporter$e = () => import("./setup-alzY_7Ju.mjs");
 const Route$g = createFileRoute("/setup")({
   head: () => ({
     meta: [{
@@ -434,7 +444,7 @@ const Route$g = createFileRoute("/setup")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$e, "component")
 });
-const $$splitComponentImporter$d = () => import("./relatorios-QoncwmEl.mjs");
+const $$splitComponentImporter$d = () => import("./relatorios-B14W_hB7.mjs");
 const Route$f = createFileRoute("/relatorios")({
   head: () => ({
     meta: [{
@@ -446,7 +456,7 @@ const Route$f = createFileRoute("/relatorios")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$d, "component")
 });
-const $$splitComponentImporter$c = () => import("./produtos-BPv2NpZg.mjs");
+const $$splitComponentImporter$c = () => import("./produtos-B_2D0aWE.mjs");
 const Route$e = createFileRoute("/produtos")({
   head: () => ({
     meta: [{
@@ -458,7 +468,7 @@ const Route$e = createFileRoute("/produtos")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$c, "component")
 });
-const $$splitComponentImporter$b = () => import("./pedidos-C2zbQruF.mjs");
+const $$splitComponentImporter$b = () => import("./pedidos-DwbBmN91.mjs");
 const Route$d = createFileRoute("/pedidos")({
   head: () => ({
     meta: [{
@@ -470,7 +480,7 @@ const Route$d = createFileRoute("/pedidos")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$b, "component")
 });
-const $$splitComponentImporter$a = () => import("./login-wu758sVP.mjs");
+const $$splitComponentImporter$a = () => import("./login-DzqLPbJR.mjs");
 const Route$c = createFileRoute("/login")({
   head: () => ({
     meta: [{
@@ -479,7 +489,7 @@ const Route$c = createFileRoute("/login")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$a, "component")
 });
-const $$splitComponentImporter$9 = () => import("./insumos-CDCwhlYX.mjs");
+const $$splitComponentImporter$9 = () => import("./insumos-CBccuDpz.mjs");
 const Route$b = createFileRoute("/insumos")({
   head: () => ({
     meta: [{
@@ -491,7 +501,7 @@ const Route$b = createFileRoute("/insumos")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$9, "component")
 });
-const $$splitComponentImporter$8 = () => import("./financeiro-By23ZngV.mjs");
+const $$splitComponentImporter$8 = () => import("./financeiro-B82Eukpn.mjs");
 const Route$a = createFileRoute("/financeiro")({
   head: () => ({
     meta: [{
@@ -503,7 +513,7 @@ const Route$a = createFileRoute("/financeiro")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$8, "component")
 });
-const $$splitComponentImporter$7 = () => import("./ficha-tecnica-Dnv3lwYp.mjs");
+const $$splitComponentImporter$7 = () => import("./ficha-tecnica-B1G8BAZ5.mjs");
 const Route$9 = createFileRoute("/ficha-tecnica")({
   head: () => ({
     meta: [{
@@ -515,7 +525,7 @@ const Route$9 = createFileRoute("/ficha-tecnica")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$7, "component")
 });
-const $$splitComponentImporter$6 = () => import("./configuracoes-_i4HEe_6.mjs");
+const $$splitComponentImporter$6 = () => import("./configuracoes-DHFu78U-.mjs");
 const Route$8 = createFileRoute("/configuracoes")({
   head: () => ({
     meta: [{
@@ -524,7 +534,7 @@ const Route$8 = createFileRoute("/configuracoes")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$6, "component")
 });
-const $$splitComponentImporter$5 = () => import("./clientes-X3WXNlfP.mjs");
+const $$splitComponentImporter$5 = () => import("./clientes-DD9IlLbN.mjs");
 const Route$7 = createFileRoute("/clientes")({
   head: () => ({
     meta: [{
@@ -536,7 +546,7 @@ const Route$7 = createFileRoute("/clientes")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$5, "component")
 });
-const $$splitComponentImporter$4 = () => import("./catalogo-BytOIrwt.mjs");
+const $$splitComponentImporter$4 = () => import("./catalogo-CfD7lx-M.mjs");
 const Route$6 = createFileRoute("/catalogo")({
   head: () => ({
     meta: [{
@@ -548,7 +558,7 @@ const Route$6 = createFileRoute("/catalogo")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$4, "component")
 });
-const $$splitComponentImporter$3 = () => import("./calendario-CLjLLULo.mjs");
+const $$splitComponentImporter$3 = () => import("./calendario-CpWIiAwQ.mjs");
 const Route$5 = createFileRoute("/calendario")({
   head: () => ({
     meta: [{
@@ -564,8 +574,8 @@ const setupQO = queryOptions({
   queryKey: ["setup"],
   queryFn: () => checkSetup()
 });
-const $$splitErrorComponentImporter = () => import("./index-Nd0eUb-l.mjs");
-const $$splitComponentImporter$2 = () => import("./index-CvA5oop2.mjs");
+const $$splitErrorComponentImporter = () => import("./index-DcfSIrRo.mjs");
+const $$splitComponentImporter$2 = () => import("./index-BSdx9QTV.mjs");
 const Route$4 = createFileRoute("/")({
   head: () => ({
     meta: [{
@@ -581,7 +591,7 @@ const Route$4 = createFileRoute("/")({
   component: lazyRouteComponent($$splitComponentImporter$2, "component"),
   errorComponent: lazyRouteComponent($$splitErrorComponentImporter, "errorComponent")
 });
-const $$splitComponentImporter$1 = () => import("./c.catalogo-BowyOHBr.mjs");
+const $$splitComponentImporter$1 = () => import("./c.catalogo-DQj_WS70.mjs");
 const Route$3 = createFileRoute("/c/catalogo")({
   head: () => ({
     meta: [{
@@ -593,7 +603,7 @@ const Route$3 = createFileRoute("/c/catalogo")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$1, "component")
 });
-const $$splitComponentImporter = () => import("./admin.nexo-CtMZoUHz.mjs");
+const $$splitComponentImporter = () => import("./admin.nexo-ah6ksGo7.mjs");
 const Route$2 = createFileRoute("/admin/nexo")({
   head: () => ({
     meta: [{
@@ -860,10 +870,12 @@ const router = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProper
   getRouter
 }, Symbol.toStringTag, { value: "Module" }));
 export {
-  updateUsuario as A,
-  createUsuario as B,
-  deleteUsuario as C,
-  router as D,
+  createPedidoPublico as A,
+  listUsuarios as B,
+  updateUsuario as C,
+  createUsuario as D,
+  deleteUsuario as E,
+  router as F,
   listClientes as a,
   listProdutos as b,
   checkSetup as c,
@@ -871,23 +883,23 @@ export {
   useAuth as e,
   listInsumos as f,
   updateInsumoEstoque as g,
-  createInsumo as h,
-  updatePedidoPagamento as i,
-  listFichas as j,
-  upsertFicha as k,
+  deleteInsumo as h,
+  createInsumo as i,
+  updatePedidoPagamento as j,
+  listFichas as k,
   listPedidos as l,
-  listCustosAdicionais as m,
+  deleteFicha as m,
   normalizePhone$1 as n,
-  getConfig as o,
-  updateConfig as p,
-  createCliente as q,
-  deleteProduto as r,
-  createProduto as s,
+  upsertFicha as o,
+  listCustosAdicionais as p,
+  getConfig as q,
+  updateConfig as r,
+  createCliente as s,
   testWrite as t,
   updatePedidoStatus as u,
-  updateProduto as v,
-  setupQO as w,
-  listProdutosPublico as x,
-  createPedidoPublico as y,
-  listUsuarios as z
+  deleteProduto as v,
+  createProduto as w,
+  updateProduto as x,
+  setupQO as y,
+  listProdutosPublico as z
 };

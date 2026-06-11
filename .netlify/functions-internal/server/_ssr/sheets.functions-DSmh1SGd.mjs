@@ -1,5 +1,5 @@
-import { T as TSS_SERVER_FUNCTION, c as createServerFn } from "./server-DS2HpPV2.mjs";
-import { g as getMetadata, r as readTable, a as appendRecord, f as findRow, u as updateRecord, s as setValues, b as getValues } from "./sheets.server-e71hR5JP.mjs";
+import { T as TSS_SERVER_FUNCTION, c as createServerFn } from "./server-BK6vLts3.mjs";
+import { g as getMetadata, r as readTable, a as appendRecord, f as findRow, u as updateRecord, s as setValues, b as getValues } from "./sheets.server-OHrRPQqp.mjs";
 import "../_libs/seroval.mjs";
 import "../_libs/react.mjs";
 import { o as objectType, s as stringType, n as numberType, e as enumType } from "../_libs/zod.mjs";
@@ -463,7 +463,8 @@ const listInsumos = createServerFn({
     estoqueAtual: get(r, headers, "Estoque Atual"),
     estoqueMinimo: get(r, headers, "Estoque Minimo"),
     valorUnitario: get(r, headers, "Custo Unitario"),
-    observacoes: get(r, headers, "Observacoes")
+    observacoes: get(r, headers, "Observacoes"),
+    ativo: get(r, headers, "ativo")
   })).filter((i) => i.id && i.nome);
 });
 const createInsumo_createServerFn_handler = createServerRpc({
@@ -531,6 +532,48 @@ const updateInsumoEstoque = createServerFn({
     ok: true
   };
 });
+const deleteInsumo_createServerFn_handler = createServerRpc({
+  id: "d1be2aafeeaa8a79de7a31bfad1ae4a45a0e90930e22072051f3b3a2748a9e54",
+  name: "deleteInsumo",
+  filename: "src/lib/sheets.functions.ts"
+}, (opts) => deleteInsumo.__executeServer(opts));
+const deleteInsumo = createServerFn({
+  method: "POST"
+}).inputValidator(objectType({
+  id: stringType().min(1)
+})).handler(deleteInsumo_createServerFn_handler, async ({
+  data
+}) => {
+  const row = await findRow("Insumos", "ID Insumo", data.id);
+  if (row < 0) throw new Error("Insumo não encontrado");
+  await updateRecord("Insumos", row, {
+    Ativo: "Não"
+  });
+  return {
+    ok: true
+  };
+});
+const deleteFicha_createServerFn_handler = createServerRpc({
+  id: "82980e4041cc9f757b373b14710e9c4fe87db2bf29b4a2a9836d43393791f7f5",
+  name: "deleteFicha",
+  filename: "src/lib/sheets.functions.ts"
+}, (opts) => deleteFicha.__executeServer(opts));
+const deleteFicha = createServerFn({
+  method: "POST"
+}).inputValidator(objectType({
+  id: stringType().min(1)
+})).handler(deleteFicha_createServerFn_handler, async ({
+  data
+}) => {
+  const row = await findRow("Receitas", "ID Receita", data.id);
+  if (row < 0) throw new Error("Ficha não encontrada");
+  await updateRecord("Receitas", row, {
+    Ativo: "Não"
+  });
+  return {
+    ok: true
+  };
+});
 const listFichas_createServerFn_handler = createServerRpc({
   id: "a91e44fdae2e28f9adad8d93a522aab354ab117801ad67604577ec2e113ecce2",
   name: "listFichas",
@@ -558,9 +601,10 @@ const listFichas = createServerFn({
       lucroBruto: lucroBruto.toFixed(2),
       margem: margem.toFixed(1),
       observacoes: get(r, headers, "Observacoes"),
-      rendimento: get(r, headers, "Rendimento") || "1"
+      rendimento: get(r, headers, "Rendimento") || "1",
+      ativo: get(r, headers, "Ativo")
     };
-  }).filter((f) => f.id && f.produtoNome);
+  }).filter((f) => f.id && f.produtoNome && f.ativo !== "Não");
 });
 const upsertFicha_createServerFn_handler = createServerRpc({
   id: "cd5bc80bb9779c63b05c13cd0fa78c591f2f020001ac59f2ddf46df0ce53f542",
@@ -739,9 +783,33 @@ const createPedidoPublico = createServerFn({
   }
   const waNorm = normalizePhone(data.whatsapp);
   const enderecoFmt = [[data.rua, data.numero].filter(Boolean).join(", "), data.bairro, data.cidade].filter(Boolean).join(" - ");
-  const clientes = await listClientes();
-  const existing = clientes.find((c) => normalizePhone(c.whatsapp) === waNorm);
-  let clienteId = existing?.id ?? "";
+  let clienteId = "";
+  try {
+    const {
+      headers,
+      rows,
+      rowOffset
+    } = await readTable("Clientes");
+    const idxId = headers.findIndex((h) => normalizeHeader(h) === "id cliente");
+    const idxNome = headers.findIndex((h) => normalizeHeader(h) === "nome");
+    const idxWhats = headers.findIndex((h) => normalizeHeader(h) === "whatsapp");
+    const foundIndex = rows.findIndex((r) => {
+      const whatsLinha = normalizePhone(r[idxWhats] || "");
+      return whatsLinha && whatsLinha === waNorm;
+    });
+    if (foundIndex >= 0) {
+      const row = rows[foundIndex];
+      clienteId = row[idxId] || newId("CLI");
+      await updateRecord("Clientes", rowOffset + foundIndex, {
+        "ID Cliente": clienteId,
+        Nome: data.clienteNome || row[idxNome] || "",
+        WhatsApp: waNorm,
+        Endereco: enderecoFmt
+      });
+    }
+  } catch (e) {
+    console.error("Erro ao buscar/atualizar cliente existente:", e);
+  }
   if (!clienteId) {
     clienteId = newId("CLI");
     await appendRecord("Clientes", {
@@ -751,18 +819,15 @@ const createPedidoPublico = createServerFn({
       Endereco: enderecoFmt,
       Observacoes: "Cliente do catálogo público"
     });
-  } else if (enderecoFmt) {
-    const row = await findRow("Clientes", "ID Cliente", clienteId);
-    if (row > 0) {
-      await updateRecord("Clientes", row, {
-        Nome: data.clienteNome,
-        Endereco: enderecoFmt
-      });
-    }
   }
   try {
-    const usuarios = await listUsuariosRaw();
-    if (!usuarios.find((u) => normalizePhone(u.whatsapp) === waNorm)) {
+    const {
+      headers,
+      rows
+    } = await readTable("Usuarios");
+    const idxWhats = headers.findIndex((h) => normalizeHeader(h) === "whatsapp");
+    const usuarioExiste = rows.some((r) => normalizePhone(r[idxWhats] || "") === waNorm);
+    if (!usuarioExiste) {
       await appendRecord("Usuarios", {
         "ID Usuario": newId("USR"),
         Nome: data.clienteNome,
@@ -771,7 +836,8 @@ const createPedidoPublico = createServerFn({
         Status: "Ativo"
       });
     }
-  } catch {
+  } catch (e) {
+    console.error("Erro não fatal ao criar usuário público:", e);
   }
   const id = newId("PED");
   await appendRecord("Pedidos", {
@@ -983,6 +1049,8 @@ export {
   createPedido_createServerFn_handler,
   createProduto_createServerFn_handler,
   createUsuario_createServerFn_handler,
+  deleteFicha_createServerFn_handler,
+  deleteInsumo_createServerFn_handler,
   deleteProduto_createServerFn_handler,
   deleteUsuario_createServerFn_handler,
   getConfig_createServerFn_handler,

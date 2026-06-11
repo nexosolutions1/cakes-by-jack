@@ -1,7 +1,7 @@
 import { r as reactExports, j as jsxRuntimeExports } from "../_libs/react.mjs";
 import { u as useQuery, b as useQueryClient, a as useMutation } from "../_libs/tanstack__react-query.mjs";
 import { u as useServerFn } from "./useServerFn-DL2oePlL.mjs";
-import { A as AppLayout } from "./app-layout-CldwD0on.mjs";
+import { A as AppLayout } from "./app-layout-Bh3N7kPK.mjs";
 import { B as Button, I as Input } from "./brand-logo-3iPsG8o9.mjs";
 import { C as Card, c as CardContent } from "./card-Bbtrid8Y.mjs";
 import { L as Label } from "./label-tl_MnXN1.mjs";
@@ -9,10 +9,10 @@ import { T as Textarea } from "./textarea-CYCFuD-O.mjs";
 import { B as Badge } from "./badge-PNZ8Owsm.mjs";
 import { S as Select, a as SelectTrigger, b as SelectValue, c as SelectContent, d as SelectItem } from "./select-CmacHktB.mjs";
 import { D as Dialog, a as DialogTrigger, b as DialogContent, c as DialogHeader, d as DialogTitle, e as DialogFooter } from "./dialog-DsEyClLt.mjs";
-import { l as listPedidos, u as updatePedidoStatus, a as listClientes, b as listProdutos, d as createPedido } from "./router-8vuZ9gUy.mjs";
+import { l as listPedidos, u as updatePedidoStatus, a as listClientes, b as listProdutos, d as createPedido } from "./router-DrEiKWY7.mjs";
 import { t as toast } from "../_libs/sonner.mjs";
 import { p as parseDateSafe, f as formatDateBR, a as formatBRL } from "./format-DkCAcujl.mjs";
-import { E as EditPagamentoDialog } from "./edit-pagamento-dialog-CLWdseFP.mjs";
+import { E as EditPagamentoDialog } from "./edit-pagamento-dialog-Dmd8XE28.mjs";
 import "../_libs/seroval.mjs";
 import { c as Plus, L as LoaderCircle, W as Wallet } from "../_libs/lucide-react.mjs";
 import "../_libs/tanstack__query-core.mjs";
@@ -73,7 +73,7 @@ import "../_libs/radix-ui__number.mjs";
 import "../_libs/radix-ui__react-collection.mjs";
 import "../_libs/radix-ui__react-direction.mjs";
 import "../_libs/radix-ui__react-use-previous.mjs";
-import "./server-DS2HpPV2.mjs";
+import "./server-BK6vLts3.mjs";
 import "node:async_hooks";
 import "../_libs/h3-v2.mjs";
 import "../_libs/rou3.mjs";
@@ -86,7 +86,7 @@ import "../_libs/supabase__storage-js.mjs";
 import "../_libs/iceberg-js.mjs";
 import "../_libs/supabase__auth-js.mjs";
 import "../_libs/supabase__functions-js.mjs";
-import "./sheets.server-e71hR5JP.mjs";
+import "./sheets.server-OHrRPQqp.mjs";
 import "../_libs/zod.mjs";
 const STATUSES = ["Aguardando confirmação", "Orçamento", "Confirmado", "Produção", "Finalizado", "Entregue", "Recusado", "Cancelado"];
 const PAGAMENTOS = ["Não pago", "Entrada recebida", "Pago integral"];
@@ -124,6 +124,15 @@ function PedidoCard({
   const update = useServerFn(updatePedidoStatus);
   const qc = useQueryClient();
   const [payOpen, setPayOpen] = reactExports.useState(false);
+  function abrirWhatsappConfirmacao() {
+    const phone = String(pedido.whatsapp || "").replace(/\D+/g, "");
+    if (!phone) {
+      toast.warning("Pedido confirmado, mas esse cliente não tem WhatsApp cadastrado.");
+      return;
+    }
+    const msg = [`Olá, ${pedido.clienteNome}! ❤️`, "", "Seu pedido na Cakes By Jack foi confirmado!", "", `Pedido: ${pedido.numero}`, `Produto: ${pedido.produto}`, `Entrega: ${formatDateBR(pedido.dataEntrega)} ${pedido.horaEntrega || ""}`, `Valor total: ${formatBRL(pedido.valorTotal)}`, `Entrada: ${formatBRL(pedido.entrada)}`, `Saldo: ${formatBRL(pedido.saldo || pedido.valorTotal)}`, "", "Obrigada pela preferência! 🍰"].join("\n");
+    window.open(`https://wa.me/55${phone}?text=${encodeURIComponent(msg)}`, "_blank");
+  }
   const mut = useMutation({
     mutationFn: (status) => update({
       data: {
@@ -132,7 +141,10 @@ function PedidoCard({
       }
     }),
     onSuccess: (_d, status) => {
-      toast.success(status === "Confirmado" ? "Pedido confirmado — agora aparece no calendário e painel financeiro" : status === "Recusado" ? "Pedido recusado" : "Status atualizado");
+      toast.success(status === "Confirmado" ? "Pedido confirmado — WhatsApp aberto para envio" : status === "Recusado" ? "Pedido recusado" : "Status atualizado");
+      if (status === "Confirmado") {
+        abrirWhatsappConfirmacao();
+      }
       qc.invalidateQueries();
     },
     onError: (e) => toast.error(e.message)

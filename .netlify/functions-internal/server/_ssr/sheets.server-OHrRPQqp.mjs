@@ -1,4 +1,4 @@
-const SPREADSHEET_ID = process.env.GOOGLE_SHEETS_ID || "1NYQBaQ9JXnLxm6Gj9z6wqnagHBZadZRx3_VFCXKFCq0";
+const SPREADSHEET_ID = process.env.GOOGLE_SHEETS_ID || "1OR4EUXPXBvVYnzCiaERSTiagoXaS890fN2iZqVRZlpM";
 const SCRIPT_URL = process.env.GOOGLE_SCRIPT_URL;
 async function callScript(action, payload = {}) {
   if (!SCRIPT_URL) throw new Error("GOOGLE_SCRIPT_URL não configurado no .env");

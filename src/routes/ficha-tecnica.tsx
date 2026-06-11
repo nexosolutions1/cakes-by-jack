@@ -24,13 +24,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ChefHat, Plus, Loader2 } from "lucide-react";
+import { ChefHat, Plus, Loader2, Trash2 } from "lucide-react";
 import {
   listFichas,
   listProdutos,
   listInsumos,
   listCustosAdicionais,
   upsertFicha,
+  deleteFicha,
   type Ficha,
   type Produto,
 } from "@/lib/sheets.functions";
@@ -116,6 +117,8 @@ function FichaPage() {
 }
 
 function FichaCard({ ficha }: { ficha: Ficha }) {
+  const remove = useServerFn(deleteFicha);
+const qc = useQueryClient();
   const margem = Number(ficha.margem) || 0;
 
   const cor =
@@ -128,16 +131,39 @@ function FichaCard({ ficha }: { ficha: Ficha }) {
   return (
     <Card className="border-border/60 shadow-card">
       <CardContent className="space-y-3 p-5">
-        <div className="flex items-start justify-between gap-2">
-          <div>
-            <p className="font-display text-lg font-semibold">{ficha.produtoNome}</p>
-            <p className="whitespace-pre-line text-xs text-muted-foreground">
-              {ficha.ingredientes}
-            </p>
-          </div>
+<div className="flex items-start justify-between gap-2">
+  <div>
+    <p className="font-display text-lg font-semibold">{ficha.produtoNome}</p>
+    <p className="whitespace-pre-line text-xs text-muted-foreground">
+      {ficha.ingredientes}
+    </p>
+  </div>
 
-          <Badge className={cor}>{margem.toFixed(1)}% margem</Badge>
-        </div>
+  <div className="flex items-center gap-2">
+    <Badge className={cor}>{margem.toFixed(1)}% margem</Badge>
+
+    <Button
+      variant="ghost"
+      size="icon"
+      className="h-8 w-8 text-red-500 hover:text-red-600"
+      onClick={async () => {
+        if (!confirm(`Excluir ficha "${ficha.produtoNome}"?`)) return;
+
+        await remove({
+          data: { id: ficha.id },
+        });
+
+        await qc.invalidateQueries({
+          queryKey: ["fichas"],
+        });
+
+        toast.success("Ficha excluída");
+      }}
+    >
+      <Trash2 className="h-4 w-4" />
+    </Button>
+  </div>
+</div>
 
         <div className="grid grid-cols-3 gap-2 rounded-xl bg-muted/40 p-3 text-center text-sm">
           <Cell label="Custo" value={`R$ ${ficha.custoTotal}`} />
@@ -180,17 +206,22 @@ function FichaDialog({ produtos, onDone }: { produtos: Produto[]; onDone: () => 
     observacoes: "",
   });
 
+  const [novoInsumo, setNovoInsumo] = useState({
+    insumoId: "",
+    quantidade: 1,
+  });
+
   const produto = produtos.find((p) => p.id === form.produtoId);
 
-  function calcularCustoIngredientes() {
-    const linhas = form.ingredientes
-      .split("\n")
-      .map((linha) => linha.trim())
-      .filter(Boolean);
+  const ingredientesSelecionados = form.ingredientes
+    .split("\n")
+    .map((linha) => linha.trim())
+    .filter(Boolean);
 
+  function calcularCustoIngredientes() {
     let total = 0;
 
-    for (const linha of linhas) {
+    for (const linha of ingredientesSelecionados) {
       const qtdMatch = linha.match(/(\d+[,.]?\d*)\s*$/);
       const quantidade = qtdMatch ? Number(qtdMatch[1].replace(",", ".")) : 1;
 
@@ -209,6 +240,37 @@ function FichaDialog({ produtos, onDone }: { produtos: Produto[]; onDone: () => 
     }
 
     return total;
+  }
+
+  function adicionarInsumo() {
+    const insumo = insumos.find((i) => i.id === novoInsumo.insumoId);
+
+    if (!insumo) {
+      toast.error("Selecione um insumo");
+      return;
+    }
+
+    const quantidade = Number(novoInsumo.quantidade) || 1;
+    const linha = `${insumo.nome} ${quantidade}`;
+
+    setForm({
+      ...form,
+      ingredientes: [...ingredientesSelecionados, linha].join("\n"),
+    });
+
+    setNovoInsumo({
+      insumoId: "",
+      quantidade: 1,
+    });
+  }
+
+  function removerIngrediente(index: number) {
+    const novasLinhas = ingredientesSelecionados.filter((_, i) => i !== index);
+
+    setForm({
+      ...form,
+      ingredientes: novasLinhas.join("\n"),
+    });
   }
 
   const custoIngredientes = calcularCustoIngredientes();
@@ -246,55 +308,112 @@ function FichaDialog({ produtos, onDone }: { produtos: Produto[]; onDone: () => 
   });
 
   return (
-    <DialogContent className="max-w-xl">
+    <DialogContent className="max-h-[92vh] max-w-2xl overflow-y-auto">
       <DialogHeader>
         <DialogTitle className="font-display text-2xl">Ficha Técnica</DialogTitle>
       </DialogHeader>
 
-      <div className="grid gap-3">
-        <Label>Produto</Label>
+      <div className="grid gap-4">
+        <div className="grid gap-2">
+          <Label>Produto</Label>
 
-        <Select
-          value={form.produtoId}
-          onValueChange={(v) => {
-            const p = produtos.find((x) => x.id === v);
+          <Select
+            value={form.produtoId}
+            onValueChange={(v) => {
+              const p = produtos.find((x) => x.id === v);
 
-            setForm({
-              ...form,
-              produtoId: v,
-              precoVenda: p ? Number(String(p.preco).replace(",", ".")) : 0,
-            });
-          }}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Selecione" />
-          </SelectTrigger>
+              setForm({
+                ...form,
+                produtoId: v,
+                precoVenda: p ? Number(String(p.preco).replace(",", ".")) : 0,
+              });
+            }}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Selecione" />
+            </SelectTrigger>
 
-          <SelectContent className="max-h-72">
-            {produtos.map((p) => (
-              <SelectItem key={p.id} value={p.id}>
-                {p.categoria} • {p.tipo} • {p.nome}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+            <SelectContent className="max-h-72">
+              {produtos.map((p) => (
+                <SelectItem key={p.id} value={p.id}>
+                  {p.categoria} • {p.tipo} • {p.nome}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
-        <Label>Ingredientes & quantidades</Label>
+        <div className="rounded-xl border border-border/60 bg-card/60 p-3">
+          <Label>Ingredientes da receita</Label>
 
-        <Textarea
-          rows={5}
-          placeholder={`Digite um insumo por linha. Ex:
-Leite Condensado 1
-Leite Ninho 2
-Morango 3`}
-          value={form.ingredientes}
-          onChange={(e) =>
-            setForm({
-              ...form,
-              ingredientes: e.target.value,
-            })
-          }
-        />
+          <div className="mt-2 grid gap-2 sm:grid-cols-[1fr_120px_auto]">
+            <Select
+              value={novoInsumo.insumoId}
+              onValueChange={(v) =>
+                setNovoInsumo({
+                  ...novoInsumo,
+                  insumoId: v,
+                })
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione o insumo" />
+              </SelectTrigger>
+
+              <SelectContent className="max-h-72">
+                {insumos.map((i) => (
+                  <SelectItem key={i.id} value={i.id}>
+                    {i.nome} — R$ {parseMoney(i.valorUnitario).toFixed(2)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Input
+              type="number"
+              min={0.01}
+              step="0.01"
+              value={novoInsumo.quantidade}
+              onChange={(e) =>
+                setNovoInsumo({
+                  ...novoInsumo,
+                  quantidade: Number(e.target.value) || 1,
+                })
+              }
+            />
+
+            <Button type="button" onClick={adicionarInsumo} className="bg-gradient-primary">
+              Adicionar
+            </Button>
+          </div>
+
+          <div className="mt-3 space-y-2">
+            {ingredientesSelecionados.length === 0 ? (
+              <p className="rounded-lg bg-muted/40 p-3 text-sm text-muted-foreground">
+                Nenhum ingrediente adicionado ainda.
+              </p>
+            ) : (
+              ingredientesSelecionados.map((linha, index) => (
+                <div
+                  key={`${linha}-${index}`}
+                  className="flex items-center justify-between rounded-lg border border-border/60 bg-background px-3 py-2 text-sm"
+                >
+                  <span>{linha}</span>
+
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => removerIngrediente(index)}
+                    className="text-destructive hover:text-destructive"
+                  >
+                    Remover
+                  </Button>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
 
         <div className="grid grid-cols-3 gap-2 rounded-xl bg-rose-soft/40 p-3 text-sm">
           <div>
@@ -375,7 +494,7 @@ Morango 3`}
 
       <DialogFooter>
         <Button
-          disabled={!form.produtoId || mut.isPending}
+          disabled={!form.produtoId || ingredientesSelecionados.length === 0 || mut.isPending}
           onClick={() => mut.mutate()}
           className="bg-gradient-primary"
         >
