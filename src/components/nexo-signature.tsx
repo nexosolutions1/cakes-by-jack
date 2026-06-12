@@ -1,7 +1,9 @@
 export function NexoSignature() {
   return (
-    <div className="flex items-center justify-center border-t border-sidebar-border px-3 py-3 text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
-      BY NEXO SOLUTIONS
+    <div className="flex justify-center border-t border-sidebar-border px-3 py-3">
+      <span className="text-[10px] font-semibold tracking-[0.35em] text-muted-foreground uppercase">
+        BY NOVA NEXO
+      </span>
     </div>
   );
 }

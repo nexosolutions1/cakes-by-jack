@@ -1,7 +1,7 @@
 # 🎂 Cakes by Jack — Sistema de Gestão da Confeitaria
 
 Sistema completo de gestão para a confeitaria **Cakes by Jack**, desenvolvido por
-**Nexo Solutions**. Frontend em TanStack Start + React 19 + Tailwind 4 e backend
+**Nova Nexo**. Frontend em TanStack Start + React 19 + Tailwind 4 e backend
 totalmente baseado em **Google Sheets** como fonte única da verdade.
 
 ---
@@ -146,4 +146,4 @@ em `cakes-by-jack-export.zip` no diretório `/mnt/documents/` desta sessão.
 
 ---
 
-Sistema desenvolvido por **Nexo Solutions** · 2026
+Sistema desenvolvido por **Nova Nexo** · 2026

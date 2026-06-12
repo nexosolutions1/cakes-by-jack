@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Package, Trash2 } from "lucide-react";
+import { Package, Trash2, Pencil } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
@@ -22,6 +22,7 @@ import {
   createInsumo,
   listInsumos,
   updateInsumoEstoque,
+  updateInsumo,
   deleteInsumo,
   type Insumo,
 } from "@/lib/sheets.functions";
@@ -37,6 +38,19 @@ export const Route = createFileRoute("/insumos")({
   }),
   component: InsumosPage,
 });
+
+function currencyInputToNumber(value: string) {
+  const onlyNumbers = String(value || "").replace(/\D/g, "");
+  return Number(onlyNumbers || 0) / 100;
+}
+
+function formatCurrencyInput(value: string) {
+  return currencyInputToNumber(value).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
+}
+
 
 function status(i: Insumo) {
   const atual = Number(i.estoqueAtual) || 0;
@@ -100,8 +114,52 @@ function InsumoCard({ insumo }: { insumo: Insumo }) {
   const s = status(insumo);
   const update = useServerFn(updateInsumoEstoque);
   const remove = useServerFn(deleteInsumo);
+  const updateInsumoFn = useServerFn(updateInsumo);
+
+const [editOpen, setEditOpen] = useState(false);
+
+const [editForm, setEditForm] = useState({
+  nome: insumo.nome,
+  unidade: insumo.unidade,
+  estoqueAtual: insumo.estoqueAtual,
+  estoqueMinimo: insumo.estoqueMinimo,
+  valorUnitario: formatCurrencyInput(
+    String(
+      Math.round(
+        Number(parseMoney(insumo.valorUnitario)) * 100
+      )
+    )
+  ),
+  observacoes: "",
+});
   const qc = useQueryClient();
   const [value, setValue] = useState(insumo.estoqueAtual);
+  const editMut = useMutation({
+  mutationFn: () =>
+    updateInsumoFn({
+      data: {
+        id: insumo.id,
+        nome: editForm.nome,
+        unidade: editForm.unidade,
+        estoqueAtual: Number(editForm.estoqueAtual),
+        estoqueMinimo: Number(editForm.estoqueMinimo),
+        valorUnitario: currencyInputToNumber(
+          editForm.valorUnitario
+        ),
+        observacoes: editForm.observacoes,
+      },
+    }),
+
+  onSuccess: () => {
+    toast.success("Insumo atualizado");
+
+    qc.invalidateQueries({
+      queryKey: ["insumos"],
+    });
+
+    setEditOpen(false);
+  },
+});
   const mut = useMutation({
     mutationFn: (v: number) => update({ data: { id: insumo.id, estoqueAtual: v } }),
     onSuccess: () => {
@@ -110,10 +168,110 @@ function InsumoCard({ insumo }: { insumo: Insumo }) {
     },
   });
 
+  
+
   return (
     <Card className="border-border/60 shadow-card">
       <CardContent className="space-y-3 p-5">
         <div className="flex items-start justify-between gap-3">
+          <Dialog open={editOpen} onOpenChange={setEditOpen}>
+  <DialogTrigger asChild>
+    <Button
+      variant="ghost"
+      size="icon"
+      className="h-8 w-8 text-blue-500 hover:text-blue-600"
+    >
+      <Pencil className="h-4 w-4" />
+    </Button>
+  </DialogTrigger>
+
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Editar Insumo</DialogTitle>
+    </DialogHeader>
+
+<div className="grid gap-3">
+
+  <div>
+    <Label>Nome do insumo</Label>
+    <Input
+      value={editForm.nome}
+      onChange={(e) =>
+        setEditForm({
+          ...editForm,
+          nome: e.target.value,
+        })
+      }
+    />
+  </div>
+
+  <div>
+    <Label>Unidade</Label>
+    <Input
+      value={editForm.unidade}
+      onChange={(e) =>
+        setEditForm({
+          ...editForm,
+          unidade: e.target.value,
+        })
+      }
+    />
+  </div>
+
+  <div>
+    <Label>Valor unitário</Label>
+    <Input
+      value={editForm.valorUnitario}
+      onChange={(e) =>
+        setEditForm({
+          ...editForm,
+          valorUnitario: formatCurrencyInput(
+            e.target.value
+          ),
+        })
+      }
+    />
+  </div>
+
+  <div>
+    <Label>Estoque atual</Label>
+    <Input
+      type="number"
+      value={editForm.estoqueAtual}
+      onChange={(e) =>
+        setEditForm({
+          ...editForm,
+          estoqueAtual: e.target.value,
+        })
+      }
+    />
+  </div>
+
+  <div>
+    <Label>Estoque mínimo</Label>
+    <Input
+      type="number"
+      value={editForm.estoqueMinimo}
+      onChange={(e) =>
+        setEditForm({
+          ...editForm,
+          estoqueMinimo: e.target.value,
+        })
+      }
+    />
+  </div>
+
+</div>
+
+    <DialogFooter>
+      <Button
+        onClick={() => editMut.mutate()}
+      >
+        Salvar alterações
+      </Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
           <Button
   variant="ghost"
   size="icon"
@@ -179,11 +337,26 @@ onClick={async () => {
 function NovoInsumoDialog({ onDone }: { onDone: () => void }) {
   const create = useServerFn(createInsumo);
   const qc = useQueryClient();
+
   const [form, setForm] = useState({
-    nome: "", unidade: "kg", estoqueAtual: 0, estoqueMinimo: 0, valorUnitario: 0, observacoes: "",
+    nome: "",
+    unidade: "kg",
+    estoqueAtual: "",
+    estoqueMinimo: "",
+    valorUnitario: "",
+    observacoes: "",
   });
+
   const mut = useMutation({
-    mutationFn: () => create({ data: form }),
+    mutationFn: () =>
+      create({
+        data: {
+          ...form,
+          estoqueAtual: Number(form.estoqueAtual || 0),
+          estoqueMinimo: Number(form.estoqueMinimo || 0),
+valorUnitario: currencyInputToNumber(form.valorUnitario),
+        },
+      }),
     onSuccess: () => {
       toast.success("Insumo cadastrado");
       qc.invalidateQueries({ queryKey: ["insumos"] });
@@ -191,38 +364,71 @@ function NovoInsumoDialog({ onDone }: { onDone: () => void }) {
     },
     onError: (e: Error) => toast.error(e.message),
   });
+
   return (
     <DialogContent>
       <DialogHeader>
         <DialogTitle className="font-display text-2xl">Novo insumo</DialogTitle>
       </DialogHeader>
+
       <div className="grid gap-3">
         <Label>Nome</Label>
-        <Input value={form.nome} onChange={(e) => setForm({ ...form, nome: e.target.value })} />
+        <Input
+          value={form.nome}
+          onChange={(e) => setForm({ ...form, nome: e.target.value })}
+        />
+
         <div className="grid grid-cols-2 gap-3">
           <div>
             <Label>Unidade</Label>
-            <Input value={form.unidade} onChange={(e) => setForm({ ...form, unidade: e.target.value })} />
+            <Input
+              value={form.unidade}
+              onChange={(e) => setForm({ ...form, unidade: e.target.value })}
+            />
           </div>
+
           <div>
-            <Label>Valor unitário</Label>
-            <Input type="number" step="0.01" value={form.valorUnitario}
-              onChange={(e) => setForm({ ...form, valorUnitario: +e.target.value })} />
+<Label>Valor unitário</Label>
+
+<Input
+  inputMode="numeric"
+  placeholder="R$ 0,00"
+  value={form.valorUnitario}
+  onChange={(e) =>
+    setForm({
+      ...form,
+      valorUnitario: formatCurrencyInput(e.target.value),
+    })
+  }
+/>
           </div>
+
           <div>
             <Label>Estoque atual</Label>
-            <Input type="number" value={form.estoqueAtual}
-              onChange={(e) => setForm({ ...form, estoqueAtual: +e.target.value })} />
+            <Input
+              type="number"
+              value={form.estoqueAtual}
+              onChange={(e) => setForm({ ...form, estoqueAtual: e.target.value })}
+            />
           </div>
+
           <div>
             <Label>Estoque mínimo</Label>
-            <Input type="number" value={form.estoqueMinimo}
-              onChange={(e) => setForm({ ...form, estoqueMinimo: +e.target.value })} />
+            <Input
+              type="number"
+              value={form.estoqueMinimo}
+              onChange={(e) => setForm({ ...form, estoqueMinimo: e.target.value })}
+            />
           </div>
         </div>
       </div>
+
       <DialogFooter>
-        <Button disabled={!form.nome || mut.isPending} onClick={() => mut.mutate()} className="bg-gradient-primary">
+        <Button
+          disabled={!form.nome || mut.isPending}
+          onClick={() => mut.mutate()}
+          className="bg-gradient-primary"
+        >
           {mut.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
           Salvar
         </Button>

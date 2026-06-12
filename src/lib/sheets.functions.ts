@@ -538,6 +538,37 @@ export const createInsumo = createServerFn({ method: "POST" })
     return { id };
   });
 
+export const updateInsumo = createServerFn({ method: "POST" })
+  .inputValidator(
+    z.object({
+      id: z.string().min(1),
+      nome: z.string().min(1),
+      unidade: z.string().default("un"),
+      valorUnitario: z.number().default(0),
+      estoqueAtual: z.number().default(0),
+      estoqueMinimo: z.number().default(0),
+      observacoes: z.string().default(""),
+    }),
+  )
+  .handler(async ({ data }) => {
+    const row = await findRow("Insumos", "ID Insumo", data.id);
+    if (row < 0) throw new Error("Insumo não encontrado");
+
+    await updateRecord("Insumos", row, {
+      Nome: data.nome,
+      Unidade: data.unidade,
+      "Valor Unitario": data.valorUnitario,
+      "Valor Unitário": data.valorUnitario,
+      "Estoque Atual": data.estoqueAtual,
+      "Estoque Minimo": data.estoqueMinimo,
+      "Estoque Mínimo": data.estoqueMinimo,
+      Observacoes: data.observacoes,
+      Observações: data.observacoes,
+    });
+
+    return { ok: true };
+  });
+
 export const updateInsumoEstoque = createServerFn({ method: "POST" })
   .inputValidator(z.object({ id: z.string(), estoqueAtual: z.number() }))
   .handler(async ({ data }) => {
@@ -550,6 +581,7 @@ export const updateInsumoEstoque = createServerFn({ method: "POST" })
 
     return { ok: true };
   });
+
 
   export const deleteInsumo = createServerFn({ method: "POST" })
   .inputValidator(z.object({ id: z.string().min(1) }))
@@ -607,6 +639,41 @@ return {
 .filter((f) => f.id && f.produtoNome && f.ativo !== "Não");
   },
 );
+
+export const updateFicha = createServerFn({ method: "POST" })
+  .inputValidator(
+    z.object({
+      id: z.string().min(1),
+      produtoId: z.string().min(1),
+      produtoNome: z.string().min(1).default(""),
+      ingredientes: z.string().default(""),
+      custoTotal: z.number().default(0),
+      precoVenda: z.number().default(0),
+      observacoes: z.string().default(""),
+    }),
+  )
+  .handler(async ({ data }) => {
+    const row = await findRow("Receitas", "ID Receita", data.id);
+    if (row < 0) throw new Error("Ficha não encontrada");
+
+    const lucro = data.precoVenda - data.custoTotal;
+    const margem = data.precoVenda > 0 ? (lucro / data.precoVenda) * 100 : 0;
+
+    await updateRecord("Receitas", row, {
+      "ID Produto": data.produtoId,
+      Produto: data.produtoNome,
+      Observacoes: data.ingredientes,
+      Observações: data.ingredientes,
+      "Custo Total": data.custoTotal,
+      "Preco Sugerido": data.precoVenda,
+      "Preço Sugerido": data.precoVenda,
+      "Margem Lucro %": margem.toFixed(1),
+      Ativo: "Sim",
+    });
+
+    return { ok: true };
+  });
+
 
 export const upsertFicha = createServerFn({ method: "POST" })
   .inputValidator(

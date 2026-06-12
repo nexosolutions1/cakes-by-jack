@@ -24,13 +24,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ChefHat, Plus, Loader2, Trash2 } from "lucide-react";
+import { ChefHat, Plus, Loader2, Trash2, Pencil } from "lucide-react";
 import {
   listFichas,
   listProdutos,
   listInsumos,
   listCustosAdicionais,
   upsertFicha,
+  updateFicha,
   deleteFicha,
   type Ficha,
   type Produto,
@@ -46,6 +47,26 @@ export const Route = createFileRoute("/ficha-tecnica")({
   }),
   component: FichaPage,
 });
+
+function currencyInputToNumber(value: string) {
+  const onlyNumbers = String(value || "").replace(/\D/g, "");
+  return Number(onlyNumbers || 0) / 100;
+}
+
+function formatCurrencyInput(value: string) {
+  return currencyInputToNumber(value).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
+}
+
+function numberToCurrencyInput(value: number) {
+  return Number(value || 0).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
+}
+
 
 function parseMoney(value: string | number | undefined | null) {
   if (value === undefined || value === null) return 0;
@@ -118,6 +139,17 @@ function FichaPage() {
 
 function FichaCard({ ficha }: { ficha: Ficha }) {
   const remove = useServerFn(deleteFicha);
+  const updateFichaFn = useServerFn(updateFicha);
+const [editOpen, setEditOpen] = useState(false);
+
+const [editForm, setEditForm] = useState({
+  produtoId: ficha.produtoId,
+  produtoNome: ficha.produtoNome,
+  ingredientes: ficha.ingredientes,
+  custoTotal: numberToCurrencyInput(Number(ficha.custoTotal)),
+  precoVenda: numberToCurrencyInput(Number(ficha.precoVenda)),
+  observacoes: ficha.observacoes || "",
+});
 const qc = useQueryClient();
   const margem = Number(ficha.margem) || 0;
 
@@ -139,32 +171,135 @@ const qc = useQueryClient();
     </p>
   </div>
 
-  <div className="flex items-center gap-2">
-    <Badge className={cor}>{margem.toFixed(1)}% margem</Badge>
+<div className="flex items-center gap-2">
 
-    <Button
-      variant="ghost"
-      size="icon"
-      className="h-8 w-8 text-red-500 hover:text-red-600"
-      onClick={async () => {
-        if (!confirm(`Excluir ficha "${ficha.produtoNome}"?`)) return;
+  <Badge className={cor}>
+    {margem.toFixed(1)}% margem
+  </Badge>
 
-        await remove({
-          data: { id: ficha.id },
-        });
+  <Dialog open={editOpen} onOpenChange={setEditOpen}>
+    <DialogTrigger asChild>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-8 w-8 text-blue-500 hover:text-blue-600"
+      >
+        <Pencil className="h-4 w-4" />
+      </Button>
+    </DialogTrigger>
 
-        await qc.invalidateQueries({
-          queryKey: ["fichas"],
-        });
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Editar Ficha Técnica</DialogTitle>
+      </DialogHeader>
 
-        toast.success("Ficha excluída");
-      }}
-    >
-      <Trash2 className="h-4 w-4" />
-    </Button>
-  </div>
+      <div className="grid gap-3">
+        <div>
+          <Label>Produto</Label>
+          <Input
+            value={editForm.produtoNome}
+            disabled
+            className="bg-muted"
+          />
+        </div>
+
+        <div>
+          <Label>Ingredientes</Label>
+          <Textarea
+            rows={5}
+            value={editForm.ingredientes}
+            onChange={(e) =>
+              setEditForm({
+                ...editForm,
+                ingredientes: e.target.value,
+              })
+            }
+          />
+        </div>
+
+        <div>
+          <Label>Custo total</Label>
+          <Input
+            inputMode="numeric"
+            value={editForm.custoTotal}
+            onChange={(e) =>
+              setEditForm({
+                ...editForm,
+                custoTotal: formatCurrencyInput(e.target.value),
+              })
+            }
+          />
+        </div>
+
+        <div>
+          <Label>Preço de venda</Label>
+          <Input
+            inputMode="numeric"
+            value={editForm.precoVenda}
+            onChange={(e) =>
+              setEditForm({
+                ...editForm,
+                precoVenda: formatCurrencyInput(e.target.value),
+              })
+            }
+          />
+        </div>
+      </div>
+
+      <DialogFooter>
+        <Button
+          className="bg-gradient-primary"
+          onClick={() =>
+            updateFichaFn({
+              data: {
+                id: ficha.id,
+                produtoId: editForm.produtoId,
+                produtoNome: editForm.produtoNome,
+                ingredientes: editForm.ingredientes,
+                custoTotal: currencyInputToNumber(editForm.custoTotal),
+                precoVenda: currencyInputToNumber(editForm.precoVenda),
+                observacoes: editForm.observacoes,
+              },
+            }).then(() => {
+              toast.success("Ficha atualizada");
+              qc.invalidateQueries({
+                queryKey: ["fichas"],
+              });
+              setEditOpen(false);
+            })
+          }
+        >
+          Salvar alterações
+        </Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
+
+  <Button
+    variant="ghost"
+    size="icon"
+    className="h-8 w-8 text-red-500 hover:text-red-600"
+    onClick={async () => {
+      if (!confirm(`Excluir ficha "${ficha.produtoNome}"?`)) return;
+
+      await remove({
+        data: {
+          id: ficha.id,
+        },
+      });
+
+      await qc.invalidateQueries({
+        queryKey: ["fichas"],
+      });
+
+      toast.success("Ficha excluída");
+    }}
+  >
+    <Trash2 className="h-4 w-4" />
+  </Button>
+
 </div>
-
+</div>
         <div className="grid grid-cols-3 gap-2 rounded-xl bg-muted/40 p-3 text-center text-sm">
           <Cell label="Custo" value={`R$ ${ficha.custoTotal}`} />
           <Cell label="Venda" value={`R$ ${ficha.precoVenda}`} />
@@ -201,15 +336,15 @@ function FichaDialog({ produtos, onDone }: { produtos: Produto[]; onDone: () => 
   const [form, setForm] = useState({
     produtoId: "",
     ingredientes: "",
-    custoTotal: 0,
-    precoVenda: 0,
+    custoTotal: "",
+    precoVenda: "",
     observacoes: "",
   });
 
-  const [novoInsumo, setNovoInsumo] = useState({
-    insumoId: "",
-    quantidade: 1,
-  });
+const [novoInsumo, setNovoInsumo] = useState({
+  insumoId: "",
+  quantidade: "",
+});
 
   const produto = produtos.find((p) => p.id === form.produtoId);
 
@@ -250,18 +385,20 @@ function FichaDialog({ produtos, onDone }: { produtos: Produto[]; onDone: () => 
       return;
     }
 
-    const quantidade = Number(novoInsumo.quantidade) || 1;
-    const linha = `${insumo.nome} ${quantidade}`;
+const quantidade =
+  novoInsumo.quantidade === ""
+    ? 1
+    : Number(novoInsumo.quantidade);    const linha = `${insumo.nome} ${quantidade}`;
 
     setForm({
       ...form,
       ingredientes: [...ingredientesSelecionados, linha].join("\n"),
     });
 
-    setNovoInsumo({
-      insumoId: "",
-      quantidade: 1,
-    });
+setNovoInsumo({
+  insumoId: "",
+  quantidade: "",
+});
   }
 
   function removerIngrediente(index: number) {
@@ -282,8 +419,11 @@ function FichaDialog({ produtos, onDone }: { produtos: Produto[]; onDone: () => 
 
   const custoCalculado = custoIngredientes + custoAdicional;
 
-  const lucro = form.precoVenda - form.custoTotal;
-  const margem = form.precoVenda > 0 ? (lucro / form.precoVenda) * 100 : 0;
+const custoTotalNumber = currencyInputToNumber(form.custoTotal);
+const precoVendaNumber = currencyInputToNumber(form.precoVenda);
+
+const lucro = precoVendaNumber - custoTotalNumber;
+const margem = precoVendaNumber > 0 ? (lucro / precoVendaNumber) * 100 : 0;
 
   const mut = useMutation({
     mutationFn: () =>
@@ -292,8 +432,8 @@ function FichaDialog({ produtos, onDone }: { produtos: Produto[]; onDone: () => 
           produtoId: form.produtoId,
           produtoNome: produto ? `${produto.categoria} • ${produto.nome}` : "",
           ingredientes: form.ingredientes,
-          custoTotal: form.custoTotal,
-          precoVenda: form.precoVenda,
+          custoTotal: custoTotalNumber,
+          precoVenda: precoVendaNumber,
           observacoes: form.observacoes,
         },
       }),
@@ -325,7 +465,7 @@ function FichaDialog({ produtos, onDone }: { produtos: Produto[]; onDone: () => 
               setForm({
                 ...form,
                 produtoId: v,
-                precoVenda: p ? Number(String(p.preco).replace(",", ".")) : 0,
+precoVenda: p ? numberToCurrencyInput(Number(String(p.preco).replace(",", "."))) : "",
               });
             }}
           >
@@ -369,18 +509,18 @@ function FichaDialog({ produtos, onDone }: { produtos: Produto[]; onDone: () => 
               </SelectContent>
             </Select>
 
-            <Input
-              type="number"
-              min={0.01}
-              step="0.01"
-              value={novoInsumo.quantidade}
-              onChange={(e) =>
-                setNovoInsumo({
-                  ...novoInsumo,
-                  quantidade: Number(e.target.value) || 1,
-                })
-              }
-            />
+<Input
+  type="number"
+  min={0.01}
+  step="0.01"
+  value={novoInsumo.quantidade}
+  onChange={(e) =>
+    setNovoInsumo({
+      ...novoInsumo,
+      quantidade: e.target.value,
+    })
+  }
+/>
 
             <Button type="button" onClick={adicionarInsumo} className="bg-gradient-primary">
               Adicionar
@@ -438,7 +578,7 @@ function FichaDialog({ produtos, onDone }: { produtos: Produto[]; onDone: () => 
           onClick={() =>
             setForm({
               ...form,
-              custoTotal: Number(custoCalculado.toFixed(2)),
+custoTotal: numberToCurrencyInput(Number(custoCalculado.toFixed(2))),
             })
           }
         >
@@ -449,33 +589,33 @@ function FichaDialog({ produtos, onDone }: { produtos: Produto[]; onDone: () => 
           <div>
             <Label>Custo total editável (R$)</Label>
 
-            <Input
-              type="number"
-              step="0.01"
-              value={form.custoTotal}
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  custoTotal: +e.target.value,
-                })
-              }
-            />
+<Input
+  inputMode="numeric"
+  placeholder="R$ 0,00"
+  value={form.custoTotal}
+  onChange={(e) =>
+    setForm({
+      ...form,
+      custoTotal: formatCurrencyInput(e.target.value),
+    })
+  }
+/>
           </div>
 
           <div>
             <Label>Preço de venda (R$)</Label>
 
-            <Input
-              type="number"
-              step="0.01"
-              value={form.precoVenda}
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  precoVenda: +e.target.value,
-                })
-              }
-            />
+<Input
+  inputMode="numeric"
+  placeholder="R$ 0,00"
+  value={form.precoVenda}
+  onChange={(e) =>
+    setForm({
+      ...form,
+      precoVenda: formatCurrencyInput(e.target.value),
+    })
+  }
+/>
           </div>
         </div>
 

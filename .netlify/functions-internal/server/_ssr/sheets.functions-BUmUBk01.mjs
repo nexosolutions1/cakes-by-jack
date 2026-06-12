@@ -1,4 +1,4 @@
-import { T as TSS_SERVER_FUNCTION, c as createServerFn } from "./server-BK6vLts3.mjs";
+import { T as TSS_SERVER_FUNCTION, c as createServerFn } from "./server-DoEYPU5W.mjs";
 import { g as getMetadata, r as readTable, a as appendRecord, f as findRow, u as updateRecord, s as setValues, b as getValues } from "./sheets.server-OHrRPQqp.mjs";
 import "../_libs/seroval.mjs";
 import "../_libs/react.mjs";
@@ -510,6 +510,41 @@ const createInsumo = createServerFn({
     id
   };
 });
+const updateInsumo_createServerFn_handler = createServerRpc({
+  id: "1773700b52ab8454afd144e5bbc829b8ad939fa043910232ecfe7523d5ae6b3b",
+  name: "updateInsumo",
+  filename: "src/lib/sheets.functions.ts"
+}, (opts) => updateInsumo.__executeServer(opts));
+const updateInsumo = createServerFn({
+  method: "POST"
+}).inputValidator(objectType({
+  id: stringType().min(1),
+  nome: stringType().min(1),
+  unidade: stringType().default("un"),
+  valorUnitario: numberType().default(0),
+  estoqueAtual: numberType().default(0),
+  estoqueMinimo: numberType().default(0),
+  observacoes: stringType().default("")
+})).handler(updateInsumo_createServerFn_handler, async ({
+  data
+}) => {
+  const row = await findRow("Insumos", "ID Insumo", data.id);
+  if (row < 0) throw new Error("Insumo não encontrado");
+  await updateRecord("Insumos", row, {
+    Nome: data.nome,
+    Unidade: data.unidade,
+    "Valor Unitario": data.valorUnitario,
+    "Valor Unitário": data.valorUnitario,
+    "Estoque Atual": data.estoqueAtual,
+    "Estoque Minimo": data.estoqueMinimo,
+    "Estoque Mínimo": data.estoqueMinimo,
+    Observacoes: data.observacoes,
+    Observações: data.observacoes
+  });
+  return {
+    ok: true
+  };
+});
 const updateInsumoEstoque_createServerFn_handler = createServerRpc({
   id: "279013415d8879536663bc71bf748c2c0049951730b66306c6e37bb4c6410fab",
   name: "updateInsumoEstoque",
@@ -605,6 +640,43 @@ const listFichas = createServerFn({
       ativo: get(r, headers, "Ativo")
     };
   }).filter((f) => f.id && f.produtoNome && f.ativo !== "Não");
+});
+const updateFicha_createServerFn_handler = createServerRpc({
+  id: "c22f6c39405e33ff05cedd25a0e454a737e38c76e9fe4d3066218b68f9a93d8f",
+  name: "updateFicha",
+  filename: "src/lib/sheets.functions.ts"
+}, (opts) => updateFicha.__executeServer(opts));
+const updateFicha = createServerFn({
+  method: "POST"
+}).inputValidator(objectType({
+  id: stringType().min(1),
+  produtoId: stringType().min(1),
+  produtoNome: stringType().min(1).default(""),
+  ingredientes: stringType().default(""),
+  custoTotal: numberType().default(0),
+  precoVenda: numberType().default(0),
+  observacoes: stringType().default("")
+})).handler(updateFicha_createServerFn_handler, async ({
+  data
+}) => {
+  const row = await findRow("Receitas", "ID Receita", data.id);
+  if (row < 0) throw new Error("Ficha não encontrada");
+  const lucro = data.precoVenda - data.custoTotal;
+  const margem = data.precoVenda > 0 ? lucro / data.precoVenda * 100 : 0;
+  await updateRecord("Receitas", row, {
+    "ID Produto": data.produtoId,
+    Produto: data.produtoNome,
+    Observacoes: data.ingredientes,
+    Observações: data.ingredientes,
+    "Custo Total": data.custoTotal,
+    "Preco Sugerido": data.precoVenda,
+    "Preço Sugerido": data.precoVenda,
+    "Margem Lucro %": margem.toFixed(1),
+    Ativo: "Sim"
+  });
+  return {
+    ok: true
+  };
 });
 const upsertFicha_createServerFn_handler = createServerRpc({
   id: "cd5bc80bb9779c63b05c13cd0fa78c591f2f020001ac59f2ddf46df0ce53f542",
@@ -1066,7 +1138,9 @@ export {
   listUsuarios_createServerFn_handler,
   testWrite_createServerFn_handler,
   updateConfig_createServerFn_handler,
+  updateFicha_createServerFn_handler,
   updateInsumoEstoque_createServerFn_handler,
+  updateInsumo_createServerFn_handler,
   updatePedidoPagamento_createServerFn_handler,
   updatePedidoStatus_createServerFn_handler,
   updateProduto_createServerFn_handler,

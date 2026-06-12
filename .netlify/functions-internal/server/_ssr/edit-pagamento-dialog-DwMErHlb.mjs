@@ -1,11 +1,8 @@
 import { r as reactExports, j as jsxRuntimeExports } from "../_libs/react.mjs";
 import { b as useQueryClient, a as useMutation } from "../_libs/tanstack__react-query.mjs";
 import { u as useServerFn } from "./useServerFn-DL2oePlL.mjs";
-import { I as Input, B as Button } from "./brand-logo-3iPsG8o9.mjs";
-import { L as Label } from "./label-tl_MnXN1.mjs";
-import { S as Select, a as SelectTrigger, b as SelectValue, c as SelectContent, d as SelectItem } from "./select-CmacHktB.mjs";
-import { b as DialogContent, c as DialogHeader, d as DialogTitle, e as DialogFooter } from "./dialog-DsEyClLt.mjs";
-import { j as updatePedidoPagamento } from "./router-DrEiKWY7.mjs";
+import { r as updatePedidoPagamento, e as DialogContent, f as DialogHeader, g as DialogTitle, L as Label, I as Input, h as DialogFooter, B as Button } from "./router-C4tcv7sc.mjs";
+import { S as Select, a as SelectTrigger, b as SelectValue, c as SelectContent, d as SelectItem } from "./select-DaYoE1iY.mjs";
 import { b as parseMoney, a as formatBRL } from "./format-DkCAcujl.mjs";
 import { t as toast } from "../_libs/sonner.mjs";
 import { L as LoaderCircle } from "../_libs/lucide-react.mjs";

@@ -44,11 +44,36 @@ export const Route = createFileRoute("/catalogo")({
 
 const CATEGORIAS = ["Bolos", "Docinhos", "Tortas", "Especiais", "Outros"];
 
+function currencyInputToNumber(value: string) {
+  const onlyNumbers = String(value || "").replace(/\D/g, "");
+  return Number(onlyNumbers || 0) / 100;
+}
+
+function formatCurrencyInput(value: string) {
+  return currencyInputToNumber(value).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
+}
+
+function numberToCurrencyInput(value: unknown) {
+  const n =
+    typeof value === "number"
+      ? value
+      : Number(String(value ?? "0").replace("R$", "").replace(/\./g, "").replace(",", "."));
+
+  return (Number.isFinite(n) ? n : 0).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
+}
+
 function CatalogoPage() {
   const { data: produtos = [], isLoading } = useQuery({
     queryKey: ["produtos"],
     queryFn: () => listProdutos(),
   });
+
   const [editing, setEditing] = useState<Produto | null>(null);
   const [open, setOpen] = useState(false);
 
@@ -114,6 +139,7 @@ function CatalogoPage() {
 function ProdutoCard({ produto, onEdit }: { produto: Produto; onEdit: () => void }) {
   const del = useServerFn(deleteProduto);
   const qc = useQueryClient();
+
   const mut = useMutation({
     mutationFn: () => del({ data: { id: produto.id } }),
     onSuccess: async () => {
@@ -125,6 +151,7 @@ function ProdutoCard({ produto, onEdit }: { produto: Produto; onEdit: () => void
   });
 
   const img = publicImageUrl(produto.imagem);
+
   return (
     <Card className="overflow-hidden border-border shadow-card transition hover:shadow-elevated">
       <div className="bg-gradient-rose relative aspect-[4/3] overflow-hidden">
@@ -139,6 +166,7 @@ function ProdutoCard({ produto, onEdit }: { produto: Produto; onEdit: () => void
           {produto.categoria || "Sem categoria"}
         </Badge>
       </div>
+
       <CardContent className="space-y-2 p-4">
         <div className="flex items-start justify-between gap-2">
           <h3 className="font-display text-lg font-semibold leading-tight">
@@ -148,15 +176,18 @@ function ProdutoCard({ produto, onEdit }: { produto: Produto; onEdit: () => void
             {formatBRL(produto.preco)}
           </span>
         </div>
+
         {produto.descricao && (
           <p className="line-clamp-2 text-sm text-muted-foreground">
             {produto.descricao}
           </p>
         )}
+
         <div className="flex gap-2 pt-2">
           <Button size="sm" variant="outline" onClick={onEdit}>
             <Pencil className="h-3.5 w-3.5" /> Editar
           </Button>
+
           <Button
             size="sm"
             variant="ghost"
@@ -185,17 +216,19 @@ function ProdutoDialog({
   const qc = useQueryClient();
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+
   const [form, setForm] = useState({
     nome: produto?.nome ?? "",
     categoria: produto?.categoria ?? "Bolos",
     tipo: produto?.tipo ?? "",
-    preco: produto?.preco ? Number(String(produto.preco).replace(",", ".")) : 0,
+    preco: produto?.preco ? numberToCurrencyInput(produto.preco) : "",
     unidade: produto?.unidade ?? "unidade",
     descricao: produto?.descricao ?? "",
     imagem: produto?.imagem ?? "",
-    observacoes: produto?.observacoes && produto.observacoes !== "EXCLUÍDO"
-      ? produto.observacoes
-      : "",
+    observacoes:
+      produto?.observacoes && produto.observacoes !== "EXCLUÍDO"
+        ? produto.observacoes
+        : "",
   });
 
   async function pickImage(file: File) {
@@ -219,11 +252,12 @@ function ProdutoDialog({
         categoria: form.categoria,
         tipo: form.tipo,
         unidade: form.unidade,
-        preco: Number(form.preco),
+        preco: currencyInputToNumber(form.preco),
         descricao: form.descricao,
         imagem: form.imagem,
         observacoes: form.observacoes,
       };
+
       if (produto) return update({ data: { id: produto.id, ...payload } });
       return create({ data: payload });
     },
@@ -258,11 +292,13 @@ function ProdutoDialog({
               <p className="mt-2 text-sm">Toque para escolher uma foto</p>
             </div>
           )}
+
           {uploading && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/30">
               <Loader2 className="h-6 w-6 animate-spin text-white" />
             </div>
           )}
+
           <input
             ref={fileRef}
             type="file"
@@ -282,6 +318,7 @@ function ProdutoDialog({
               onChange={(e) => setForm({ ...form, nome: e.target.value })}
             />
           </Field>
+
           <Field label="Categoria">
             <select
               className="h-9 rounded-md border border-input bg-card px-3 text-sm"
@@ -300,18 +337,25 @@ function ProdutoDialog({
         <div className="grid gap-3 sm:grid-cols-3">
           <Field label="Preço (R$) *">
             <Input
-              type="number"
-              step="0.01"
+              inputMode="numeric"
+              placeholder="R$ 0,00"
               value={form.preco}
-              onChange={(e) => setForm({ ...form, preco: +e.target.value })}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  preco: formatCurrencyInput(e.target.value),
+                })
+              }
             />
           </Field>
+
           <Field label="Unidade">
             <Input
               value={form.unidade}
               onChange={(e) => setForm({ ...form, unidade: e.target.value })}
             />
           </Field>
+
           <Field label="Tipo / Linha">
             <Input
               value={form.tipo}
@@ -332,7 +376,7 @@ function ProdutoDialog({
 
       <DialogFooter>
         <Button
-          disabled={!form.nome || !form.preco || mut.isPending || uploading}
+          disabled={!form.nome || currencyInputToNumber(form.preco) <= 0 || mut.isPending || uploading}
           onClick={() => mut.mutate()}
           className="bg-gradient-primary"
         >

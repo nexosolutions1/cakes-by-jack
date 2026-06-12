@@ -1,17 +1,14 @@
 import { r as reactExports, j as jsxRuntimeExports } from "../_libs/react.mjs";
 import { u as useQuery, b as useQueryClient, a as useMutation } from "../_libs/tanstack__react-query.mjs";
 import { u as useServerFn } from "./useServerFn-DL2oePlL.mjs";
-import { A as AppLayout } from "./app-layout-Bh3N7kPK.mjs";
-import { C as Card, c as CardContent } from "./card-Bbtrid8Y.mjs";
-import { B as Button, I as Input } from "./brand-logo-3iPsG8o9.mjs";
-import { L as Label } from "./label-tl_MnXN1.mjs";
-import { B as Badge } from "./badge-PNZ8Owsm.mjs";
-import { D as Dialog, a as DialogTrigger, b as DialogContent, c as DialogHeader, d as DialogTitle, e as DialogFooter } from "./dialog-DsEyClLt.mjs";
-import { f as listInsumos, g as updateInsumoEstoque, h as deleteInsumo, i as createInsumo } from "./router-DrEiKWY7.mjs";
+import { A as AppLayout } from "./app-layout-CxpNs-BW.mjs";
+import { C as Card, c as CardContent } from "./card-acCiEC5p.mjs";
+import { j as listInsumos, D as Dialog, k as DialogTrigger, B as Button, m as updateInsumoEstoque, o as deleteInsumo, p as updateInsumo, e as DialogContent, f as DialogHeader, g as DialogTitle, L as Label, I as Input, h as DialogFooter, q as createInsumo } from "./router-C4tcv7sc.mjs";
+import { B as Badge } from "./badge-Do_NBdl2.mjs";
 import { t as toast } from "../_libs/sonner.mjs";
 import { b as parseMoney } from "./format-DkCAcujl.mjs";
 import "../_libs/seroval.mjs";
-import { c as Plus, T as Trash2, B as Boxes, d as TriangleAlert, L as LoaderCircle } from "../_libs/lucide-react.mjs";
+import { c as Plus, d as Pencil, T as Trash2, B as Boxes, e as TriangleAlert, L as LoaderCircle } from "../_libs/lucide-react.mjs";
 import "../_libs/tanstack__query-core.mjs";
 import "../_libs/tanstack__react-router.mjs";
 import "../_libs/tanstack__router-core.mjs";
@@ -62,14 +59,15 @@ import "../_libs/floating-ui__utils.mjs";
 import "../_libs/radix-ui__react-arrow.mjs";
 import "../_libs/radix-ui__react-use-size.mjs";
 import "../_libs/@radix-ui/react-visually-hidden+[...].mjs";
-import "./nexo-signature-6kPfTCBv.mjs";
-import "../_libs/tailwind-merge.mjs";
-import "../_libs/radix-ui__react-label.mjs";
-import "./server-BK6vLts3.mjs";
+import "./brand-logo-C_BRZq5w.mjs";
+import "./nexo-signature-XrLnPLze.mjs";
+import "./server-DoEYPU5W.mjs";
 import "node:async_hooks";
 import "../_libs/h3-v2.mjs";
 import "../_libs/rou3.mjs";
 import "../_libs/srvx.mjs";
+import "../_libs/tailwind-merge.mjs";
+import "../_libs/radix-ui__react-label.mjs";
 import "../_libs/supabase__supabase-js.mjs";
 import "../_libs/supabase__postgrest-js.mjs";
 import "../_libs/supabase__realtime-js.mjs";
@@ -80,6 +78,16 @@ import "../_libs/supabase__auth-js.mjs";
 import "../_libs/supabase__functions-js.mjs";
 import "./sheets.server-OHrRPQqp.mjs";
 import "../_libs/zod.mjs";
+function currencyInputToNumber(value) {
+  const onlyNumbers = String(value || "").replace(/\D/g, "");
+  return Number(onlyNumbers || 0) / 100;
+}
+function formatCurrencyInput(value) {
+  return currencyInputToNumber(value).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL"
+  });
+}
 function status(i) {
   const atual = Number(i.estoqueAtual) || 0;
   const min = Number(i.estoqueMinimo) || 0;
@@ -123,8 +131,38 @@ function InsumoCard({
   const s = status(insumo);
   const update = useServerFn(updateInsumoEstoque);
   const remove = useServerFn(deleteInsumo);
+  const updateInsumoFn = useServerFn(updateInsumo);
+  const [editOpen, setEditOpen] = reactExports.useState(false);
+  const [editForm, setEditForm] = reactExports.useState({
+    nome: insumo.nome,
+    unidade: insumo.unidade,
+    estoqueAtual: insumo.estoqueAtual,
+    estoqueMinimo: insumo.estoqueMinimo,
+    valorUnitario: formatCurrencyInput(String(Math.round(Number(parseMoney(insumo.valorUnitario)) * 100))),
+    observacoes: ""
+  });
   const qc = useQueryClient();
   const [value, setValue] = reactExports.useState(insumo.estoqueAtual);
+  const editMut = useMutation({
+    mutationFn: () => updateInsumoFn({
+      data: {
+        id: insumo.id,
+        nome: editForm.nome,
+        unidade: editForm.unidade,
+        estoqueAtual: Number(editForm.estoqueAtual),
+        estoqueMinimo: Number(editForm.estoqueMinimo),
+        valorUnitario: currencyInputToNumber(editForm.valorUnitario),
+        observacoes: editForm.observacoes
+      }
+    }),
+    onSuccess: () => {
+      toast.success("Insumo atualizado");
+      qc.invalidateQueries({
+        queryKey: ["insumos"]
+      });
+      setEditOpen(false);
+    }
+  });
   const mut = useMutation({
     mutationFn: (v) => update({
       data: {
@@ -141,6 +179,50 @@ function InsumoCard({
   });
   return /* @__PURE__ */ jsxRuntimeExports.jsx(Card, { className: "border-border/60 shadow-card", children: /* @__PURE__ */ jsxRuntimeExports.jsxs(CardContent, { className: "space-y-3 p-5", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-start justify-between gap-3", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(Dialog, { open: editOpen, onOpenChange: setEditOpen, children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(DialogTrigger, { asChild: true, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { variant: "ghost", size: "icon", className: "h-8 w-8 text-blue-500 hover:text-blue-600", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Pencil, { className: "h-4 w-4" }) }) }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(DialogContent, { children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(DialogHeader, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(DialogTitle, { children: "Editar Insumo" }) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid gap-3", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { children: "Nome do insumo" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Input, { value: editForm.nome, onChange: (e) => setEditForm({
+                ...editForm,
+                nome: e.target.value
+              }) })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { children: "Unidade" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Input, { value: editForm.unidade, onChange: (e) => setEditForm({
+                ...editForm,
+                unidade: e.target.value
+              }) })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { children: "Valor unitário" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Input, { value: editForm.valorUnitario, onChange: (e) => setEditForm({
+                ...editForm,
+                valorUnitario: formatCurrencyInput(e.target.value)
+              }) })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { children: "Estoque atual" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Input, { type: "number", value: editForm.estoqueAtual, onChange: (e) => setEditForm({
+                ...editForm,
+                estoqueAtual: e.target.value
+              }) })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { children: "Estoque mínimo" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Input, { type: "number", value: editForm.estoqueMinimo, onChange: (e) => setEditForm({
+                ...editForm,
+                estoqueMinimo: e.target.value
+              }) })
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(DialogFooter, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { onClick: () => editMut.mutate(), children: "Salvar alterações" }) })
+        ] })
+      ] }),
       /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { variant: "ghost", size: "icon", className: "h-8 w-8 text-red-500 hover:text-red-600", onClick: async () => {
         if (!confirm(`Excluir o insumo "${insumo.nome}"?`)) return;
         await remove({
@@ -190,14 +272,19 @@ function NovoInsumoDialog({
   const [form, setForm] = reactExports.useState({
     nome: "",
     unidade: "kg",
-    estoqueAtual: 0,
-    estoqueMinimo: 0,
-    valorUnitario: 0,
+    estoqueAtual: "",
+    estoqueMinimo: "",
+    valorUnitario: "",
     observacoes: ""
   });
   const mut = useMutation({
     mutationFn: () => create({
-      data: form
+      data: {
+        ...form,
+        estoqueAtual: Number(form.estoqueAtual || 0),
+        estoqueMinimo: Number(form.estoqueMinimo || 0),
+        valorUnitario: currencyInputToNumber(form.valorUnitario)
+      }
     }),
     onSuccess: () => {
       toast.success("Insumo cadastrado");
@@ -226,23 +313,23 @@ function NovoInsumoDialog({
         ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { children: "Valor unitário" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(Input, { type: "number", step: "0.01", value: form.valorUnitario, onChange: (e) => setForm({
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Input, { inputMode: "numeric", placeholder: "R$ 0,00", value: form.valorUnitario, onChange: (e) => setForm({
             ...form,
-            valorUnitario: +e.target.value
+            valorUnitario: formatCurrencyInput(e.target.value)
           }) })
         ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { children: "Estoque atual" }),
           /* @__PURE__ */ jsxRuntimeExports.jsx(Input, { type: "number", value: form.estoqueAtual, onChange: (e) => setForm({
             ...form,
-            estoqueAtual: +e.target.value
+            estoqueAtual: e.target.value
           }) })
         ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { children: "Estoque mínimo" }),
           /* @__PURE__ */ jsxRuntimeExports.jsx(Input, { type: "number", value: form.estoqueMinimo, onChange: (e) => setForm({
             ...form,
-            estoqueMinimo: +e.target.value
+            estoqueMinimo: e.target.value
           }) })
         ] })
       ] })

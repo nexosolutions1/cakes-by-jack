@@ -1,19 +1,15 @@
 import { r as reactExports, j as jsxRuntimeExports } from "../_libs/react.mjs";
 import { u as useQuery, b as useQueryClient, a as useMutation } from "../_libs/tanstack__react-query.mjs";
 import { u as useServerFn } from "./useServerFn-DL2oePlL.mjs";
-import { A as AppLayout } from "./app-layout-Bh3N7kPK.mjs";
-import { B as Button, I as Input } from "./brand-logo-3iPsG8o9.mjs";
-import { C as Card, c as CardContent } from "./card-Bbtrid8Y.mjs";
-import { L as Label } from "./label-tl_MnXN1.mjs";
-import { T as Textarea } from "./textarea-CYCFuD-O.mjs";
-import { B as Badge } from "./badge-PNZ8Owsm.mjs";
-import { D as Dialog, b as DialogContent, c as DialogHeader, d as DialogTitle, e as DialogFooter } from "./dialog-DsEyClLt.mjs";
+import { A as AppLayout } from "./app-layout-CxpNs-BW.mjs";
+import { b as listProdutos, D as Dialog, B as Button, E as deleteProduto, F as createProduto, G as updateProduto, e as DialogContent, f as DialogHeader, g as DialogTitle, I as Input, T as Textarea, h as DialogFooter, L as Label } from "./router-C4tcv7sc.mjs";
+import { C as Card, c as CardContent } from "./card-acCiEC5p.mjs";
+import { B as Badge } from "./badge-Do_NBdl2.mjs";
 import { a as formatBRL } from "./format-DkCAcujl.mjs";
-import { b as listProdutos, v as deleteProduto, w as createProduto, x as updateProduto } from "./router-DrEiKWY7.mjs";
 import { d as deleteProductImage, p as publicImageUrl, u as uploadProductImage } from "./image-storage-C3FCaYPT.mjs";
 import { t as toast } from "../_libs/sonner.mjs";
 import "../_libs/seroval.mjs";
-import { m as Share2, c as Plus, I as ImagePlus, h as Pencil, T as Trash2, L as LoaderCircle } from "../_libs/lucide-react.mjs";
+import { m as Share2, c as Plus, I as ImagePlus, d as Pencil, T as Trash2, L as LoaderCircle } from "../_libs/lucide-react.mjs";
 import "../_libs/tanstack__query-core.mjs";
 import "../_libs/tanstack__react-router.mjs";
 import "../_libs/tanstack__router-core.mjs";
@@ -64,14 +60,15 @@ import "../_libs/floating-ui__utils.mjs";
 import "../_libs/radix-ui__react-arrow.mjs";
 import "../_libs/radix-ui__react-use-size.mjs";
 import "../_libs/@radix-ui/react-visually-hidden+[...].mjs";
-import "./nexo-signature-6kPfTCBv.mjs";
-import "../_libs/tailwind-merge.mjs";
-import "../_libs/radix-ui__react-label.mjs";
-import "./server-BK6vLts3.mjs";
+import "./brand-logo-C_BRZq5w.mjs";
+import "./nexo-signature-XrLnPLze.mjs";
+import "./server-DoEYPU5W.mjs";
 import "node:async_hooks";
 import "../_libs/h3-v2.mjs";
 import "../_libs/rou3.mjs";
 import "../_libs/srvx.mjs";
+import "../_libs/tailwind-merge.mjs";
+import "../_libs/radix-ui__react-label.mjs";
 import "../_libs/supabase__supabase-js.mjs";
 import "../_libs/supabase__postgrest-js.mjs";
 import "../_libs/supabase__realtime-js.mjs";
@@ -83,6 +80,23 @@ import "../_libs/supabase__functions-js.mjs";
 import "./sheets.server-OHrRPQqp.mjs";
 import "../_libs/zod.mjs";
 const CATEGORIAS = ["Bolos", "Docinhos", "Tortas", "Especiais", "Outros"];
+function currencyInputToNumber(value) {
+  const onlyNumbers = String(value || "").replace(/\D/g, "");
+  return Number(onlyNumbers || 0) / 100;
+}
+function formatCurrencyInput(value) {
+  return currencyInputToNumber(value).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL"
+  });
+}
+function numberToCurrencyInput(value) {
+  const n = typeof value === "number" ? value : Number(String(value ?? "0").replace("R$", "").replace(/\./g, "").replace(",", "."));
+  return (Number.isFinite(n) ? n : 0).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL"
+  });
+}
 function CatalogoPage() {
   const {
     data: produtos = [],
@@ -183,7 +197,7 @@ function ProdutoDialog({
     nome: produto?.nome ?? "",
     categoria: produto?.categoria ?? "Bolos",
     tipo: produto?.tipo ?? "",
-    preco: produto?.preco ? Number(String(produto.preco).replace(",", ".")) : 0,
+    preco: produto?.preco ? numberToCurrencyInput(produto.preco) : "",
     unidade: produto?.unidade ?? "unidade",
     descricao: produto?.descricao ?? "",
     imagem: produto?.imagem ?? "",
@@ -213,7 +227,7 @@ function ProdutoDialog({
         categoria: form.categoria,
         tipo: form.tipo,
         unidade: form.unidade,
-        preco: Number(form.preco),
+        preco: currencyInputToNumber(form.preco),
         descricao: form.descricao,
         imagem: form.imagem,
         observacoes: form.observacoes
@@ -263,9 +277,9 @@ function ProdutoDialog({
         }), children: CATEGORIAS.map((c) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: c, children: c }, c)) }) })
       ] }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid gap-3 sm:grid-cols-3", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx(Field, { label: "Preço (R$) *", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Input, { type: "number", step: "0.01", value: form.preco, onChange: (e) => setForm({
+        /* @__PURE__ */ jsxRuntimeExports.jsx(Field, { label: "Preço (R$) *", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Input, { inputMode: "numeric", placeholder: "R$ 0,00", value: form.preco, onChange: (e) => setForm({
           ...form,
-          preco: +e.target.value
+          preco: formatCurrencyInput(e.target.value)
         }) }) }),
         /* @__PURE__ */ jsxRuntimeExports.jsx(Field, { label: "Unidade", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Input, { value: form.unidade, onChange: (e) => setForm({
           ...form,
@@ -281,7 +295,7 @@ function ProdutoDialog({
         descricao: e.target.value
       }), placeholder: "Sabor, recheio, ocasiões ideais..." }) })
     ] }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(DialogFooter, { children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Button, { disabled: !form.nome || !form.preco || mut.isPending || uploading, onClick: () => mut.mutate(), className: "bg-gradient-primary", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(DialogFooter, { children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Button, { disabled: !form.nome || currencyInputToNumber(form.preco) <= 0 || mut.isPending || uploading, onClick: () => mut.mutate(), className: "bg-gradient-primary", children: [
       mut.isPending && /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { className: "h-4 w-4 animate-spin" }),
       produto ? "Salvar alterações" : "Criar produto"
     ] }) })

@@ -1,20 +1,16 @@
 import { r as reactExports, j as jsxRuntimeExports } from "../_libs/react.mjs";
 import { u as useQuery, b as useQueryClient, a as useMutation } from "../_libs/tanstack__react-query.mjs";
 import { u as useServerFn } from "./useServerFn-DL2oePlL.mjs";
-import { A as AppLayout } from "./app-layout-Bh3N7kPK.mjs";
-import { B as Button, I as Input } from "./brand-logo-3iPsG8o9.mjs";
-import { C as Card, c as CardContent } from "./card-Bbtrid8Y.mjs";
-import { L as Label } from "./label-tl_MnXN1.mjs";
-import { T as Textarea } from "./textarea-CYCFuD-O.mjs";
-import { B as Badge } from "./badge-PNZ8Owsm.mjs";
-import { S as Select, a as SelectTrigger, b as SelectValue, c as SelectContent, d as SelectItem } from "./select-CmacHktB.mjs";
-import { D as Dialog, a as DialogTrigger, b as DialogContent, c as DialogHeader, d as DialogTitle, e as DialogFooter } from "./dialog-DsEyClLt.mjs";
-import { l as listPedidos, u as updatePedidoStatus, a as listClientes, b as listProdutos, d as createPedido } from "./router-DrEiKWY7.mjs";
+import { A as AppLayout } from "./app-layout-CxpNs-BW.mjs";
+import { l as listPedidos, D as Dialog, B as Button, u as updatePedidoStatus, a as listClientes, b as listProdutos, d as createPedido, e as DialogContent, f as DialogHeader, g as DialogTitle, I as Input, T as Textarea, h as DialogFooter, L as Label } from "./router-C4tcv7sc.mjs";
+import { C as Card, c as CardContent } from "./card-acCiEC5p.mjs";
+import { B as Badge } from "./badge-Do_NBdl2.mjs";
+import { S as Select, a as SelectTrigger, b as SelectValue, c as SelectContent, d as SelectItem } from "./select-DaYoE1iY.mjs";
 import { t as toast } from "../_libs/sonner.mjs";
 import { p as parseDateSafe, f as formatDateBR, a as formatBRL } from "./format-DkCAcujl.mjs";
-import { E as EditPagamentoDialog } from "./edit-pagamento-dialog-Dmd8XE28.mjs";
+import { E as EditPagamentoDialog } from "./edit-pagamento-dialog-DwMErHlb.mjs";
 import "../_libs/seroval.mjs";
-import { c as Plus, L as LoaderCircle, W as Wallet } from "../_libs/lucide-react.mjs";
+import { c as Plus, L as LoaderCircle, M as MapPin, W as Wallet } from "../_libs/lucide-react.mjs";
 import "../_libs/tanstack__query-core.mjs";
 import "../_libs/tanstack__react-router.mjs";
 import "../_libs/tanstack__router-core.mjs";
@@ -65,19 +61,15 @@ import "../_libs/floating-ui__utils.mjs";
 import "../_libs/radix-ui__react-arrow.mjs";
 import "../_libs/radix-ui__react-use-size.mjs";
 import "../_libs/@radix-ui/react-visually-hidden+[...].mjs";
-import "./nexo-signature-6kPfTCBv.mjs";
-import "../_libs/tailwind-merge.mjs";
-import "../_libs/radix-ui__react-label.mjs";
-import "../_libs/radix-ui__react-select.mjs";
-import "../_libs/radix-ui__number.mjs";
-import "../_libs/radix-ui__react-collection.mjs";
-import "../_libs/radix-ui__react-direction.mjs";
-import "../_libs/radix-ui__react-use-previous.mjs";
-import "./server-BK6vLts3.mjs";
+import "./brand-logo-C_BRZq5w.mjs";
+import "./nexo-signature-XrLnPLze.mjs";
+import "./server-DoEYPU5W.mjs";
 import "node:async_hooks";
 import "../_libs/h3-v2.mjs";
 import "../_libs/rou3.mjs";
 import "../_libs/srvx.mjs";
+import "../_libs/tailwind-merge.mjs";
+import "../_libs/radix-ui__react-label.mjs";
 import "../_libs/supabase__supabase-js.mjs";
 import "../_libs/supabase__postgrest-js.mjs";
 import "../_libs/supabase__realtime-js.mjs";
@@ -88,9 +80,20 @@ import "../_libs/supabase__auth-js.mjs";
 import "../_libs/supabase__functions-js.mjs";
 import "./sheets.server-OHrRPQqp.mjs";
 import "../_libs/zod.mjs";
+import "../_libs/radix-ui__react-select.mjs";
+import "../_libs/radix-ui__number.mjs";
+import "../_libs/radix-ui__react-collection.mjs";
+import "../_libs/radix-ui__react-direction.mjs";
+import "../_libs/radix-ui__react-use-previous.mjs";
 const STATUSES = ["Aguardando confirmação", "Orçamento", "Confirmado", "Produção", "Finalizado", "Entregue", "Recusado", "Cancelado"];
 const PAGAMENTOS = ["Não pago", "Entrada recebida", "Pago integral"];
 const FORMAS = ["Pix", "Débito", "Crédito", "Dinheiro"];
+const ENDERECO_RETIRADA = {
+  rua: "José Vargas",
+  numero: "40",
+  bairro: "Centro",
+  cidade: "Camanducaia"
+};
 function PedidosPage() {
   const {
     data: pedidos = []
@@ -105,11 +108,11 @@ function PedidosPage() {
     return [...list].sort((a, b) => +(parseDateSafe(b.dataPedido) ?? 0) - +(parseDateSafe(a.dataPedido) ?? 0));
   }, [pedidos, filter]);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(AppLayout, { title: "Pedidos", subtitle: `${pedidos.length} no total`, actions: /* @__PURE__ */ jsxRuntimeExports.jsxs(Dialog, { open, onOpenChange: setOpen, children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx(DialogTrigger, { asChild: true, children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Button, { className: "bg-gradient-primary shadow-soft", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(Button, { onClick: () => setOpen(true), className: "bg-gradient-primary shadow-soft", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx(Plus, { className: "h-4 w-4" }),
       "Novo pedido"
-    ] }) }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(NovoPedidoDialog, { onDone: () => setOpen(false) })
+    ] }),
+    open && /* @__PURE__ */ jsxRuntimeExports.jsx(NovoPedidoDialog, { onDone: () => setOpen(false) })
   ] }), children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mb-6 flex flex-wrap gap-2", children: ["Todos", ...STATUSES].map((s) => /* @__PURE__ */ jsxRuntimeExports.jsx("button", { onClick: () => setFilter(s), className: `rounded-full border px-4 py-1.5 text-sm transition ${filter === s ? "border-primary bg-gradient-primary text-primary-foreground shadow-soft" : "border-border bg-card hover:border-primary/40"}`, children: s }, s)) }),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-3", children: [
@@ -118,12 +121,77 @@ function PedidosPage() {
     ] })
   ] });
 }
+function extractObsLine(obs, label) {
+  const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const match = obs.match(new RegExp(`${escaped}:\\s*(.+)`, "i"));
+  return match?.[1]?.trim() || "";
+}
+function parseEnderecoCompleto(endereco) {
+  const partes = endereco.split(" - ").map((parte) => parte.trim()).filter(Boolean);
+  const ruaNumero = partes[0] || "";
+  const bairro = partes[1] || "";
+  const cidade = partes.slice(2).join(" - ") || partes[2] || "";
+  const ruaNumeroMatch = ruaNumero.match(/^(.+?),\s*(.+)$/);
+  const rua = ruaNumeroMatch?.[1]?.trim() || ruaNumero;
+  const numero = ruaNumeroMatch?.[2]?.trim() || "";
+  return {
+    rua,
+    numero,
+    bairro,
+    cidade
+  };
+}
+function normalizarCampoEndereco(value) {
+  const texto = String(value || "").trim();
+  if (!texto || /^ped-/i.test(texto)) {
+    return "";
+  }
+  return texto;
+}
+function getPedidoAddressInfo(pedido) {
+  const p = pedido;
+  const obs = String(pedido.observacoes || "");
+  const obsLower = obs.toLowerCase();
+  const enderecoEntregaTexto = extractObsLine(obs, "Endereço de entrega") || extractObsLine(obs, "Endereco de entrega");
+  extractObsLine(obs, "Endereço de retirada") || extractObsLine(obs, "Endereco de retirada");
+  const tipoAtendimentoTexto = extractObsLine(obs, "Tipo de atendimento");
+  const isRetirada = tipoAtendimentoTexto.toLowerCase().includes("retirada") || obsLower.includes("endereço de retirada") || obsLower.includes("endereco de retirada");
+  const isEntrega = tipoAtendimentoTexto.toLowerCase().includes("entrega") || obsLower.includes("endereço de entrega") || obsLower.includes("endereco de entrega") || obsLower.includes("taxa de entrega");
+  const tipo = isRetirada ? "Retirada" : isEntrega ? "Entrega" : "Não informado";
+  const enderecoParseado = isRetirada ? ENDERECO_RETIRADA : parseEnderecoCompleto(enderecoEntregaTexto);
+  const rua = isRetirada ? ENDERECO_RETIRADA.rua : enderecoParseado.rua || normalizarCampoEndereco(p.rua);
+  const numero = isRetirada ? ENDERECO_RETIRADA.numero : enderecoParseado.numero || normalizarCampoEndereco(p.numero);
+  const bairro = isRetirada ? ENDERECO_RETIRADA.bairro : enderecoParseado.bairro || normalizarCampoEndereco(p.bairro);
+  const cidade = isRetirada ? ENDERECO_RETIRADA.cidade : enderecoParseado.cidade || normalizarCampoEndereco(p.cidade);
+  const taxaEntrega = extractObsLine(obs, "Taxa de entrega") || extractObsLine(obs, "Taxa entrega");
+  const regiaoEntrega = extractObsLine(obs, "Região da entrega") || extractObsLine(obs, "Regiao da entrega") || extractObsLine(obs, "Opção de entrega") || extractObsLine(obs, "Opcao de entrega");
+  const itensMatch = obs.match(/Itens:\s*([\s\S]*?)(?:\nTipo de atendimento:|\nRegião da entrega:|\nRegiao da entrega:|\nEndereço de entrega:|\nEndereco de entrega:|$)/i);
+  const itens = itensMatch?.[1]?.trim() || "";
+  const subtotalProdutos = extractObsLine(obs, "Subtotal produtos");
+  const totalPedido = extractObsLine(obs, "Total do pedido");
+  const entradaMinima = extractObsLine(obs, "Entrada mínima (50%)") || extractObsLine(obs, "Entrada minima (50%)");
+  return {
+    tipo,
+    rua,
+    numero,
+    bairro,
+    cidade,
+    taxaEntrega,
+    regiaoEntrega,
+    itens,
+    subtotalProdutos,
+    totalPedido,
+    entradaMinima,
+    observacoes: pedido.observacoes || ""
+  };
+}
 function PedidoCard({
   pedido
 }) {
   const update = useServerFn(updatePedidoStatus);
   const qc = useQueryClient();
   const [payOpen, setPayOpen] = reactExports.useState(false);
+  const [addressOpen, setAddressOpen] = reactExports.useState(false);
   function abrirWhatsappConfirmacao() {
     const phone = String(pedido.whatsapp || "").replace(/\D+/g, "");
     if (!phone) {
@@ -151,6 +219,7 @@ function PedidoCard({
   });
   const isPending = pedido.status === "Aguardando confirmação";
   const sitColor = pedido.situacaoPagamento === "Pago integral" ? "bg-success/15 text-success" : pedido.situacaoPagamento === "Entrada recebida" ? "bg-warning/20 text-warning" : "bg-destructive/15 text-destructive";
+  const address = getPedidoAddressInfo(pedido);
   return /* @__PURE__ */ jsxRuntimeExports.jsx(Card, { className: `shadow-card ${isPending ? "border-2 border-primary/50 bg-primary/5" : "border-border/60"}`, children: /* @__PURE__ */ jsxRuntimeExports.jsxs(CardContent, { className: "flex flex-col gap-4 p-4 sm:p-5 lg:flex-row lg:items-center lg:justify-between", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0 space-y-1", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap items-center gap-2", children: [
@@ -179,6 +248,10 @@ function PedidoCard({
         /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { children: [
           "Saldo: ",
           formatBRL(pedido.saldo || pedido.valorTotal)
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { children: [
+          "Tipo: ",
+          /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: address.tipo })
         ] })
       ] })
     ] }),
@@ -190,6 +263,10 @@ function PedidoCard({
         ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { size: "sm", variant: "outline", onClick: () => mut.mutate("Recusado"), disabled: mut.isPending, className: "border-destructive/40 text-destructive hover:bg-destructive/10", children: "Recusar" })
       ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(Button, { size: "sm", variant: "outline", onClick: () => setAddressOpen(true), className: "border-primary/30", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(MapPin, { className: "h-3.5 w-3.5" }),
+        " Endereço"
+      ] }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs(Button, { size: "sm", variant: "outline", onClick: () => setPayOpen(true), className: "border-gold/40", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx(Wallet, { className: "h-3.5 w-3.5" }),
         " Pagamento"
@@ -199,8 +276,68 @@ function PedidoCard({
         /* @__PURE__ */ jsxRuntimeExports.jsx(SelectContent, { children: STATUSES.map((s) => /* @__PURE__ */ jsxRuntimeExports.jsx(SelectItem, { value: s, children: s }, s)) })
       ] })
     ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(Dialog, { open: addressOpen, onOpenChange: setAddressOpen, children: addressOpen && /* @__PURE__ */ jsxRuntimeExports.jsx(EnderecoDialog, { pedido }) }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(Dialog, { open: payOpen, onOpenChange: setPayOpen, children: payOpen && /* @__PURE__ */ jsxRuntimeExports.jsx(EditPagamentoDialog, { pedido, onDone: () => setPayOpen(false) }) })
   ] }) });
+}
+function EnderecoDialog({
+  pedido
+}) {
+  const address = getPedidoAddressInfo(pedido);
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(DialogContent, { className: "max-h-[92vh] w-[calc(100vw-1rem)] max-w-xl overflow-y-auto", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(DialogHeader, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(DialogTitle, { className: "font-display text-2xl", children: "Detalhes do pedido" }) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-4", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "rounded-2xl border border-border/60 bg-card/70 p-4 shadow-sm", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs font-semibold uppercase tracking-[0.18em] text-rose-deep", children: "Cliente" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-2 flex flex-wrap items-center gap-2", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-display text-xl font-semibold text-chocolate", children: pedido.clienteNome }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Badge, { variant: "outline", className: "border-gold/40", children: pedido.numero })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-1 text-sm text-muted-foreground", children: pedido.produto })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "rounded-2xl border border-primary/30 bg-primary/5 p-4 shadow-sm", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs font-semibold uppercase tracking-[0.18em] text-rose-deep", children: "Atendimento" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-2 text-lg font-semibold text-chocolate", children: address.tipo }),
+        address.regiaoEntrega && /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "mt-1 text-sm text-muted-foreground", children: [
+          "Região: ",
+          address.regiaoEntrega
+        ] }),
+        address.taxaEntrega && /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-sm text-muted-foreground", children: [
+          "Taxa: ",
+          address.taxaEntrega
+        ] })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid gap-3 rounded-2xl border border-border/60 bg-card/70 p-4 text-sm shadow-sm", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs font-semibold uppercase tracking-[0.18em] text-rose-deep", children: "Endereço" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(InfoLine, { label: "Rua", value: address.rua || "Não informado" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(InfoLine, { label: "Número", value: address.numero || "Não informado" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(InfoLine, { label: "Bairro", value: address.bairro || "Não informado" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(InfoLine, { label: "Cidade", value: address.cidade || "Não informado" })
+      ] }),
+      (address.itens || address.subtotalProdutos || address.totalPedido || address.entradaMinima) && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "rounded-2xl border border-gold/40 bg-gradient-rose/40 p-4 shadow-sm", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs font-semibold uppercase tracking-[0.18em] text-rose-deep", children: "Resumo do carrinho" }),
+        address.itens && /* @__PURE__ */ jsxRuntimeExports.jsx("pre", { className: "mt-3 whitespace-pre-wrap font-sans text-sm text-muted-foreground", children: address.itens }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-3 space-y-1 border-t border-border/60 pt-3 text-sm", children: [
+          address.subtotalProdutos && /* @__PURE__ */ jsxRuntimeExports.jsx(InfoLine, { label: "Subtotal produtos", value: address.subtotalProdutos }),
+          address.totalPedido && /* @__PURE__ */ jsxRuntimeExports.jsx(InfoLine, { label: "Total do pedido", value: address.totalPedido }),
+          address.entradaMinima && /* @__PURE__ */ jsxRuntimeExports.jsx(InfoLine, { label: "Entrada mínima", value: address.entradaMinima })
+        ] })
+      ] }),
+      address.observacoes && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "rounded-2xl border border-border/60 bg-card/70 p-4 shadow-sm", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs font-semibold uppercase tracking-[0.18em] text-rose-deep", children: "Observações completas" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("pre", { className: "mt-2 whitespace-pre-wrap font-sans text-sm leading-relaxed text-muted-foreground", children: address.observacoes })
+      ] })
+    ] })
+  ] });
+}
+function InfoLine({
+  label,
+  value
+}) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex justify-between gap-4 border-b border-border/50 pb-2 last:border-0 last:pb-0", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-muted-foreground", children: label }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-right text-foreground", children: value })
+  ] });
 }
 function NovoPedidoDialog({
   onDone

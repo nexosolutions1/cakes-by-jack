@@ -3,9 +3,16 @@ import { Q as QueryClientProvider, u as useQuery, q as queryOptions } from "../_
 import { c as createRouter, a as createRootRouteWithContext, u as useRouter, L as Link, O as Outlet, H as HeadContent, S as Scripts, b as createFileRoute, l as lazyRouteComponent } from "../_libs/tanstack__react-router.mjs";
 import { r as reactExports, j as jsxRuntimeExports } from "../_libs/react.mjs";
 import { T as Toaster$1 } from "../_libs/sonner.mjs";
-import { c as createServerFn, T as TSS_SERVER_FUNCTION, g as getServerFnById } from "./server-BK6vLts3.mjs";
+import { c as createServerFn, T as TSS_SERVER_FUNCTION, g as getServerFnById } from "./server-DoEYPU5W.mjs";
+import { S as Slot } from "../_libs/radix-ui__react-slot.mjs";
+import { c as cva } from "../_libs/class-variance-authority.mjs";
+import { c as clsx } from "../_libs/clsx.mjs";
+import { t as twMerge } from "../_libs/tailwind-merge.mjs";
+import { R as Root } from "../_libs/radix-ui__react-label.mjs";
+import { O as Overlay, P as Portal, C as Content, a as Close, T as Title, D as Description, R as Root$1, b as Trigger } from "../_libs/radix-ui__react-dialog.mjs";
 import { c as createClient } from "../_libs/supabase__supabase-js.mjs";
 import { r as readTable } from "./sheets.server-OHrRPQqp.mjs";
+import { X } from "../_libs/lucide-react.mjs";
 import { o as objectType, s as stringType, n as numberType, e as enumType } from "../_libs/zod.mjs";
 import "../_libs/tanstack__router-core.mjs";
 import "../_libs/tanstack__history.mjs";
@@ -24,15 +31,36 @@ import "node:async_hooks";
 import "../_libs/h3-v2.mjs";
 import "../_libs/rou3.mjs";
 import "../_libs/srvx.mjs";
+import "../_libs/radix-ui__react-compose-refs.mjs";
+import "../_libs/radix-ui__react-primitive.mjs";
+import "../_libs/radix-ui__primitive.mjs";
+import "../_libs/radix-ui__react-context.mjs";
+import "../_libs/radix-ui__react-id.mjs";
+import "../_libs/@radix-ui/react-use-layout-effect+[...].mjs";
+import "../_libs/@radix-ui/react-use-controllable-state+[...].mjs";
+import "../_libs/@radix-ui/react-dismissable-layer+[...].mjs";
+import "../_libs/@radix-ui/react-use-callback-ref+[...].mjs";
+import "../_libs/@radix-ui/react-use-escape-keydown+[...].mjs";
+import "../_libs/radix-ui__react-focus-scope.mjs";
+import "../_libs/radix-ui__react-portal.mjs";
+import "../_libs/radix-ui__react-presence.mjs";
+import "../_libs/radix-ui__react-focus-guards.mjs";
+import "../_libs/react-remove-scroll.mjs";
+import "tslib";
+import "../_libs/react-remove-scroll-bar.mjs";
+import "../_libs/react-style-singleton.mjs";
+import "../_libs/get-nonce.mjs";
+import "../_libs/use-sidecar.mjs";
+import "../_libs/use-callback-ref.mjs";
+import "../_libs/aria-hidden.mjs";
 import "../_libs/supabase__postgrest-js.mjs";
 import "../_libs/supabase__realtime-js.mjs";
 import "../_libs/supabase__phoenix.mjs";
 import "../_libs/supabase__storage-js.mjs";
 import "../_libs/iceberg-js.mjs";
 import "../_libs/supabase__auth-js.mjs";
-import "tslib";
 import "../_libs/supabase__functions-js.mjs";
-const appCss = "/assets/styles-DJ89l8nq.css";
+const appCss = "/assets/styles-CIxE4fpx.css";
 const favicon = "/assets/favicon-_f5vaHWQ.jpeg";
 function reportLovableError(error, context = {}) {
   if (typeof window === "undefined") return;
@@ -179,6 +207,17 @@ const createInsumo = createServerFn({
   fornecedor: stringType().optional(),
   observacoes: stringType().optional()
 })).handler(createSsrRpc("d12402f2c6a1cd4ca968e95a2c80f69f5b865cc361e164cb5c7a83eb2eb340c1"));
+const updateInsumo = createServerFn({
+  method: "POST"
+}).inputValidator(objectType({
+  id: stringType().min(1),
+  nome: stringType().min(1),
+  unidade: stringType().default("un"),
+  valorUnitario: numberType().default(0),
+  estoqueAtual: numberType().default(0),
+  estoqueMinimo: numberType().default(0),
+  observacoes: stringType().default("")
+})).handler(createSsrRpc("1773700b52ab8454afd144e5bbc829b8ad939fa043910232ecfe7523d5ae6b3b"));
 const updateInsumoEstoque = createServerFn({
   method: "POST"
 }).inputValidator(objectType({
@@ -198,6 +237,17 @@ const deleteFicha = createServerFn({
 const listFichas = createServerFn({
   method: "GET"
 }).handler(createSsrRpc("a91e44fdae2e28f9adad8d93a522aab354ab117801ad67604577ec2e113ecce2"));
+const updateFicha = createServerFn({
+  method: "POST"
+}).inputValidator(objectType({
+  id: stringType().min(1),
+  produtoId: stringType().min(1),
+  produtoNome: stringType().min(1).default(""),
+  ingredientes: stringType().default(""),
+  custoTotal: numberType().default(0),
+  precoVenda: numberType().default(0),
+  observacoes: stringType().default("")
+})).handler(createSsrRpc("c22f6c39405e33ff05cedd25a0e454a737e38c76e9fe4d3066218b68f9a93d8f"));
 const upsertFicha = createServerFn({
   method: "POST"
 }).inputValidator(objectType({
@@ -435,7 +485,7 @@ function RootComponent() {
     /* @__PURE__ */ jsxRuntimeExports.jsx(Toaster, { richColors: true, position: "top-right" })
   ] }) });
 }
-const $$splitComponentImporter$e = () => import("./setup-alzY_7Ju.mjs");
+const $$splitComponentImporter$e = () => import("./setup-DPVjEft6.mjs");
 const Route$g = createFileRoute("/setup")({
   head: () => ({
     meta: [{
@@ -444,7 +494,7 @@ const Route$g = createFileRoute("/setup")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$e, "component")
 });
-const $$splitComponentImporter$d = () => import("./relatorios-B14W_hB7.mjs");
+const $$splitComponentImporter$d = () => import("./relatorios-YFbsZ4E4.mjs");
 const Route$f = createFileRoute("/relatorios")({
   head: () => ({
     meta: [{
@@ -456,7 +506,7 @@ const Route$f = createFileRoute("/relatorios")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$d, "component")
 });
-const $$splitComponentImporter$c = () => import("./produtos-B_2D0aWE.mjs");
+const $$splitComponentImporter$c = () => import("./produtos-CTcXxZ64.mjs");
 const Route$e = createFileRoute("/produtos")({
   head: () => ({
     meta: [{
@@ -468,7 +518,7 @@ const Route$e = createFileRoute("/produtos")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$c, "component")
 });
-const $$splitComponentImporter$b = () => import("./pedidos-DwbBmN91.mjs");
+const $$splitComponentImporter$b = () => import("./pedidos-bOyvrzCf.mjs");
 const Route$d = createFileRoute("/pedidos")({
   head: () => ({
     meta: [{
@@ -480,7 +530,7 @@ const Route$d = createFileRoute("/pedidos")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$b, "component")
 });
-const $$splitComponentImporter$a = () => import("./login-DzqLPbJR.mjs");
+const $$splitComponentImporter$a = () => import("./login-DyeJdcSi.mjs");
 const Route$c = createFileRoute("/login")({
   head: () => ({
     meta: [{
@@ -489,7 +539,7 @@ const Route$c = createFileRoute("/login")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$a, "component")
 });
-const $$splitComponentImporter$9 = () => import("./insumos-CBccuDpz.mjs");
+const $$splitComponentImporter$9 = () => import("./insumos-Dya05yaJ.mjs");
 const Route$b = createFileRoute("/insumos")({
   head: () => ({
     meta: [{
@@ -501,7 +551,7 @@ const Route$b = createFileRoute("/insumos")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$9, "component")
 });
-const $$splitComponentImporter$8 = () => import("./financeiro-B82Eukpn.mjs");
+const $$splitComponentImporter$8 = () => import("./financeiro-YmNh-I6q.mjs");
 const Route$a = createFileRoute("/financeiro")({
   head: () => ({
     meta: [{
@@ -513,7 +563,7 @@ const Route$a = createFileRoute("/financeiro")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$8, "component")
 });
-const $$splitComponentImporter$7 = () => import("./ficha-tecnica-B1G8BAZ5.mjs");
+const $$splitComponentImporter$7 = () => import("./ficha-tecnica-Unod9A4m.mjs");
 const Route$9 = createFileRoute("/ficha-tecnica")({
   head: () => ({
     meta: [{
@@ -525,7 +575,7 @@ const Route$9 = createFileRoute("/ficha-tecnica")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$7, "component")
 });
-const $$splitComponentImporter$6 = () => import("./configuracoes-DHFu78U-.mjs");
+const $$splitComponentImporter$6 = () => import("./configuracoes-BD50F8Z0.mjs");
 const Route$8 = createFileRoute("/configuracoes")({
   head: () => ({
     meta: [{
@@ -534,7 +584,7 @@ const Route$8 = createFileRoute("/configuracoes")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$6, "component")
 });
-const $$splitComponentImporter$5 = () => import("./clientes-DD9IlLbN.mjs");
+const $$splitComponentImporter$5 = () => import("./clientes-BKNyG46V.mjs");
 const Route$7 = createFileRoute("/clientes")({
   head: () => ({
     meta: [{
@@ -546,7 +596,7 @@ const Route$7 = createFileRoute("/clientes")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$5, "component")
 });
-const $$splitComponentImporter$4 = () => import("./catalogo-CfD7lx-M.mjs");
+const $$splitComponentImporter$4 = () => import("./catalogo-Dc8Ewnzx.mjs");
 const Route$6 = createFileRoute("/catalogo")({
   head: () => ({
     meta: [{
@@ -558,7 +608,7 @@ const Route$6 = createFileRoute("/catalogo")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$4, "component")
 });
-const $$splitComponentImporter$3 = () => import("./calendario-CpWIiAwQ.mjs");
+const $$splitComponentImporter$3 = () => import("./calendario-B6zXPK0O.mjs");
 const Route$5 = createFileRoute("/calendario")({
   head: () => ({
     meta: [{
@@ -574,8 +624,8 @@ const setupQO = queryOptions({
   queryKey: ["setup"],
   queryFn: () => checkSetup()
 });
-const $$splitErrorComponentImporter = () => import("./index-DcfSIrRo.mjs");
-const $$splitComponentImporter$2 = () => import("./index-BSdx9QTV.mjs");
+const $$splitErrorComponentImporter = () => import("./index-DeLMqtib.mjs");
+const $$splitComponentImporter$2 = () => import("./index-B7FAgapR.mjs");
 const Route$4 = createFileRoute("/")({
   head: () => ({
     meta: [{
@@ -591,7 +641,145 @@ const Route$4 = createFileRoute("/")({
   component: lazyRouteComponent($$splitComponentImporter$2, "component"),
   errorComponent: lazyRouteComponent($$splitErrorComponentImporter, "errorComponent")
 });
-const $$splitComponentImporter$1 = () => import("./c.catalogo-DQj_WS70.mjs");
+function cn(...inputs) {
+  return twMerge(clsx(inputs));
+}
+const buttonVariants = cva(
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground shadow hover:bg-primary/90",
+        destructive: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
+        outline: "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
+        secondary: "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
+        link: "text-primary underline-offset-4 hover:underline"
+      },
+      size: {
+        default: "h-9 px-4 py-2",
+        sm: "h-8 rounded-md px-3 text-xs",
+        lg: "h-10 rounded-md px-8",
+        icon: "h-9 w-9"
+      }
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default"
+    }
+  }
+);
+const Button = reactExports.forwardRef(
+  ({ className, variant, size, asChild = false, ...props }, ref) => {
+    const Comp = asChild ? Slot : "button";
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(Comp, { className: cn(buttonVariants({ variant, size, className })), ref, ...props });
+  }
+);
+Button.displayName = "Button";
+const Input = reactExports.forwardRef(
+  ({ className, type, ...props }, ref) => {
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "input",
+      {
+        type,
+        className: cn(
+          "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+          className
+        ),
+        ref,
+        ...props
+      }
+    );
+  }
+);
+Input.displayName = "Input";
+const labelVariants = cva(
+  "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+);
+const Label = reactExports.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntimeExports.jsx(Root, { ref, className: cn(labelVariants(), className), ...props }));
+Label.displayName = Root.displayName;
+const Textarea = reactExports.forwardRef(
+  ({ className, ...props }, ref) => {
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "textarea",
+      {
+        className: cn(
+          "flex min-h-[60px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+          className
+        ),
+        ref,
+        ...props
+      }
+    );
+  }
+);
+Textarea.displayName = "Textarea";
+const Dialog = Root$1;
+const DialogTrigger = Trigger;
+const DialogPortal = Portal;
+const DialogOverlay = reactExports.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+  Overlay,
+  {
+    ref,
+    className: cn(
+      "fixed inset-0 z-50 bg-black/80  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      className
+    ),
+    ...props
+  }
+));
+DialogOverlay.displayName = Overlay.displayName;
+const DialogContent = reactExports.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxRuntimeExports.jsxs(DialogPortal, { children: [
+  /* @__PURE__ */ jsxRuntimeExports.jsx(DialogOverlay, {}),
+  /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    Content,
+    {
+      ref,
+      className: cn(
+        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 sm:rounded-lg",
+        className
+      ),
+      ...props,
+      children: [
+        children,
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(Close, { className: "absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background cursor-pointer transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(X, { className: "h-4 w-4" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "sr-only", children: "Close" })
+        ] })
+      ]
+    }
+  )
+] }));
+DialogContent.displayName = Content.displayName;
+const DialogHeader = ({ className, ...props }) => /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: cn("flex flex-col space-y-1.5 text-center sm:text-left", className), ...props });
+DialogHeader.displayName = "DialogHeader";
+const DialogFooter = ({ className, ...props }) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+  "div",
+  {
+    className: cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2", className),
+    ...props
+  }
+);
+DialogFooter.displayName = "DialogFooter";
+const DialogTitle = reactExports.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+  Title,
+  {
+    ref,
+    className: cn("text-lg font-semibold leading-none tracking-tight", className),
+    ...props
+  }
+));
+DialogTitle.displayName = Title.displayName;
+const DialogDescription = reactExports.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+  Description,
+  {
+    ref,
+    className: cn("text-sm text-muted-foreground", className),
+    ...props
+  }
+));
+DialogDescription.displayName = Description.displayName;
+const $$splitComponentImporter$1 = () => import("./c.catalogo-1kuu5PNn.mjs");
 const Route$3 = createFileRoute("/c/catalogo")({
   head: () => ({
     meta: [{
@@ -603,7 +791,7 @@ const Route$3 = createFileRoute("/c/catalogo")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$1, "component")
 });
-const $$splitComponentImporter = () => import("./admin.nexo-ah6ksGo7.mjs");
+const $$splitComponentImporter = () => import("./admin.nexo-SWEgCI7o.mjs");
 const Route$2 = createFileRoute("/admin/nexo")({
   head: () => ({
     meta: [{
@@ -870,36 +1058,49 @@ const router = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProper
   getRouter
 }, Symbol.toStringTag, { value: "Module" }));
 export {
-  createPedidoPublico as A,
-  listUsuarios as B,
-  updateUsuario as C,
-  createUsuario as D,
-  deleteUsuario as E,
-  router as F,
+  updateConfig as A,
+  Button as B,
+  createCliente as C,
+  Dialog as D,
+  deleteProduto as E,
+  createProduto as F,
+  updateProduto as G,
+  setupQO as H,
+  Input as I,
+  listProdutosPublico as J,
+  createPedidoPublico as K,
+  Label as L,
+  cn as M,
+  listUsuarios as N,
+  updateUsuario as O,
+  createUsuario as P,
+  deleteUsuario as Q,
+  router as R,
+  Textarea as T,
   listClientes as a,
   listProdutos as b,
   checkSetup as c,
   createPedido as d,
-  useAuth as e,
-  listInsumos as f,
-  updateInsumoEstoque as g,
-  deleteInsumo as h,
-  createInsumo as i,
-  updatePedidoPagamento as j,
-  listFichas as k,
+  DialogContent as e,
+  DialogHeader as f,
+  DialogTitle as g,
+  DialogFooter as h,
+  useAuth as i,
+  listInsumos as j,
+  DialogTrigger as k,
   listPedidos as l,
-  deleteFicha as m,
+  updateInsumoEstoque as m,
   normalizePhone$1 as n,
-  upsertFicha as o,
-  listCustosAdicionais as p,
-  getConfig as q,
-  updateConfig as r,
-  createCliente as s,
+  deleteInsumo as o,
+  updateInsumo as p,
+  createInsumo as q,
+  updatePedidoPagamento as r,
+  listFichas as s,
   testWrite as t,
   updatePedidoStatus as u,
-  deleteProduto as v,
-  createProduto as w,
-  updateProduto as x,
-  setupQO as y,
-  listProdutosPublico as z
+  deleteFicha as v,
+  updateFicha as w,
+  upsertFicha as x,
+  listCustosAdicionais as y,
+  getConfig as z
 };

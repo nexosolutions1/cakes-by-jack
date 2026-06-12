@@ -22,9 +22,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-import { Plus, Loader2, Wallet } from "lucide-react";
+import { Plus, Loader2, Wallet, MapPin } from "lucide-react";
 import {
   createPedido,
   listClientes,
@@ -51,17 +50,24 @@ const STATUSES = ["Aguardando confirmação", "Orçamento", "Confirmado", "Produ
 const PAGAMENTOS = ["Não pago", "Entrada recebida", "Pago integral"];
 const FORMAS = ["Pix", "Débito", "Crédito", "Dinheiro"];
 
+const ENDERECO_RETIRADA = {
+  rua: "José Vargas",
+  numero: "40",
+  bairro: "Centro",
+  cidade: "Camanducaia",
+};
+
 function PedidosPage() {
   const { data: pedidos = [] } = useQuery({
     queryKey: ["pedidos"],
     queryFn: () => listPedidos(),
   });
+
   const [open, setOpen] = useState(false);
   const [filter, setFilter] = useState("Todos");
 
   const filtered = useMemo(() => {
-    const list =
-      filter === "Todos" ? pedidos : pedidos.filter((p) => p.status === filter);
+    const list = filter === "Todos" ? pedidos : pedidos.filter((p) => p.status === filter);
     return [...list].sort(
       (a, b) =>
         (+(parseDateSafe(b.dataPedido) ?? 0)) -
@@ -75,13 +81,11 @@ function PedidosPage() {
       subtitle={`${pedidos.length} no total`}
       actions={
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button className="bg-gradient-primary shadow-soft">
-              <Plus className="h-4 w-4" />
-              Novo pedido
-            </Button>
-          </DialogTrigger>
-          <NovoPedidoDialog onDone={() => setOpen(false)} />
+          <Button onClick={() => setOpen(true)} className="bg-gradient-primary shadow-soft">
+            <Plus className="h-4 w-4" />
+            Novo pedido
+          </Button>
+          {open && <NovoPedidoDialog onDone={() => setOpen(false)} />}
         </Dialog>
       }
     >
@@ -109,6 +113,7 @@ function PedidosPage() {
             </CardContent>
           </Card>
         )}
+
         {filtered.map((p) => (
           <PedidoCard key={p.id} pedido={p} />
         ))}
@@ -117,13 +122,131 @@ function PedidosPage() {
   );
 }
 
+function extractObsLine(obs: string, label: string) {
+  const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const match = obs.match(new RegExp(`${escaped}:\\s*(.+)`, "i"));
+  return match?.[1]?.trim() || "";
+}
+
+function parseEnderecoCompleto(endereco: string) {
+  const partes = endereco
+    .split(" - ")
+    .map((parte) => parte.trim())
+    .filter(Boolean);
+
+  const ruaNumero = partes[0] || "";
+  const bairro = partes[1] || "";
+  const cidade = partes.slice(2).join(" - ") || partes[2] || "";
+
+  const ruaNumeroMatch = ruaNumero.match(/^(.+?),\s*(.+)$/);
+  const rua = ruaNumeroMatch?.[1]?.trim() || ruaNumero;
+  const numero = ruaNumeroMatch?.[2]?.trim() || "";
+
+  return { rua, numero, bairro, cidade };
+}
+
+function normalizarCampoEndereco(value: unknown) {
+  const texto = String(value || "").trim();
+
+  if (!texto || /^ped-/i.test(texto)) {
+    return "";
+  }
+
+  return texto;
+}
+
+function getPedidoAddressInfo(pedido: Pedido) {
+  const p = pedido as any;
+  const obs = String(pedido.observacoes || "");
+
+  const obsLower = obs.toLowerCase();
+
+  const enderecoEntregaTexto =
+    extractObsLine(obs, "Endereço de entrega") ||
+    extractObsLine(obs, "Endereco de entrega");
+
+  const enderecoRetiradaTexto =
+    extractObsLine(obs, "Endereço de retirada") ||
+    extractObsLine(obs, "Endereco de retirada");
+
+  const tipoAtendimentoTexto = extractObsLine(obs, "Tipo de atendimento");
+
+  const isRetirada =
+    tipoAtendimentoTexto.toLowerCase().includes("retirada") ||
+    obsLower.includes("endereço de retirada") ||
+    obsLower.includes("endereco de retirada");
+
+  const isEntrega =
+    tipoAtendimentoTexto.toLowerCase().includes("entrega") ||
+    obsLower.includes("endereço de entrega") ||
+    obsLower.includes("endereco de entrega") ||
+    obsLower.includes("taxa de entrega");
+
+  const tipo = isRetirada ? "Retirada" : isEntrega ? "Entrega" : "Não informado";
+
+  const enderecoParseado = isRetirada
+    ? ENDERECO_RETIRADA
+    : parseEnderecoCompleto(enderecoEntregaTexto);
+
+  const rua = isRetirada
+    ? ENDERECO_RETIRADA.rua
+    : enderecoParseado.rua || normalizarCampoEndereco(p.rua);
+
+  const numero = isRetirada
+    ? ENDERECO_RETIRADA.numero
+    : enderecoParseado.numero || normalizarCampoEndereco(p.numero);
+
+  const bairro = isRetirada
+    ? ENDERECO_RETIRADA.bairro
+    : enderecoParseado.bairro || normalizarCampoEndereco(p.bairro);
+
+  const cidade = isRetirada
+    ? ENDERECO_RETIRADA.cidade
+    : enderecoParseado.cidade || normalizarCampoEndereco(p.cidade);
+
+  const taxaEntrega =
+    extractObsLine(obs, "Taxa de entrega") ||
+    extractObsLine(obs, "Taxa entrega");
+
+  const regiaoEntrega =
+    extractObsLine(obs, "Região da entrega") ||
+    extractObsLine(obs, "Regiao da entrega") ||
+    extractObsLine(obs, "Opção de entrega") ||
+    extractObsLine(obs, "Opcao de entrega");
+
+  const itensMatch = obs.match(/Itens:\s*([\s\S]*?)(?:\nTipo de atendimento:|\nRegião da entrega:|\nRegiao da entrega:|\nEndereço de entrega:|\nEndereco de entrega:|$)/i);
+  const itens = itensMatch?.[1]?.trim() || "";
+
+  const subtotalProdutos = extractObsLine(obs, "Subtotal produtos");
+  const totalPedido = extractObsLine(obs, "Total do pedido");
+  const entradaMinima =
+    extractObsLine(obs, "Entrada mínima (50%)") ||
+    extractObsLine(obs, "Entrada minima (50%)");
+
+  return {
+    tipo,
+    rua,
+    numero,
+    bairro,
+    cidade,
+    taxaEntrega,
+    regiaoEntrega,
+    itens,
+    subtotalProdutos,
+    totalPedido,
+    entradaMinima,
+    observacoes: pedido.observacoes || "",
+  };
+}
+
 function PedidoCard({ pedido }: { pedido: Pedido }) {
   const update = useServerFn(updatePedidoStatus);
   const qc = useQueryClient();
   const [payOpen, setPayOpen] = useState(false);
+  const [addressOpen, setAddressOpen] = useState(false);
 
   function abrirWhatsappConfirmacao() {
-const phone = String((pedido as any).whatsapp || "").replace(/\D+/g, "");
+    const phone = String((pedido as any).whatsapp || "").replace(/\D+/g, "");
 
     if (!phone) {
       toast.warning("Pedido confirmado, mas esse cliente não tem WhatsApp cadastrado.");
@@ -169,12 +292,15 @@ const phone = String((pedido as any).whatsapp || "").replace(/\D+/g, "");
   });
 
   const isPending = pedido.status === "Aguardando confirmação";
+
   const sitColor =
     pedido.situacaoPagamento === "Pago integral"
       ? "bg-success/15 text-success"
       : pedido.situacaoPagamento === "Entrada recebida"
         ? "bg-warning/20 text-warning"
         : "bg-destructive/15 text-destructive";
+
+  const address = getPedidoAddressInfo(pedido);
 
   return (
     <Card
@@ -208,6 +334,9 @@ const phone = String((pedido as any).whatsapp || "").replace(/\D+/g, "");
             </span>
             <span>Entrada: {formatBRL(pedido.entrada)}</span>
             <span>Saldo: {formatBRL(pedido.saldo || pedido.valorTotal)}</span>
+            <span>
+              Tipo: <strong className="text-foreground">{address.tipo}</strong>
+            </span>
           </div>
         </div>
 
@@ -239,6 +368,15 @@ const phone = String((pedido as any).whatsapp || "").replace(/\D+/g, "");
           <Button
             size="sm"
             variant="outline"
+            onClick={() => setAddressOpen(true)}
+            className="border-primary/30"
+          >
+            <MapPin className="h-3.5 w-3.5" /> Endereço
+          </Button>
+
+          <Button
+            size="sm"
+            variant="outline"
             onClick={() => setPayOpen(true)}
             className="border-gold/40"
           >
@@ -259,6 +397,10 @@ const phone = String((pedido as any).whatsapp || "").replace(/\D+/g, "");
           </Select>
         </div>
 
+        <Dialog open={addressOpen} onOpenChange={setAddressOpen}>
+          {addressOpen && <EnderecoDialog pedido={pedido} />}
+        </Dialog>
+
         <Dialog open={payOpen} onOpenChange={setPayOpen}>
           {payOpen && (
             <EditPagamentoDialog pedido={pedido} onDone={() => setPayOpen(false)} />
@@ -266,6 +408,110 @@ const phone = String((pedido as any).whatsapp || "").replace(/\D+/g, "");
         </Dialog>
       </CardContent>
     </Card>
+  );
+}
+
+function EnderecoDialog({ pedido }: { pedido: Pedido }) {
+  const address = getPedidoAddressInfo(pedido);
+
+  return (
+    <DialogContent className="max-h-[92vh] w-[calc(100vw-1rem)] max-w-xl overflow-y-auto">
+      <DialogHeader>
+        <DialogTitle className="font-display text-2xl">Detalhes do pedido</DialogTitle>
+      </DialogHeader>
+
+      <div className="space-y-4">
+        <div className="rounded-2xl border border-border/60 bg-card/70 p-4 shadow-sm">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-rose-deep">
+            Cliente
+          </p>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <p className="font-display text-xl font-semibold text-chocolate">
+              {pedido.clienteNome}
+            </p>
+            <Badge variant="outline" className="border-gold/40">
+              {pedido.numero}
+            </Badge>
+          </div>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {pedido.produto}
+          </p>
+        </div>
+
+        <div className="rounded-2xl border border-primary/30 bg-primary/5 p-4 shadow-sm">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-rose-deep">
+            Atendimento
+          </p>
+          <p className="mt-2 text-lg font-semibold text-chocolate">{address.tipo}</p>
+          {address.regiaoEntrega && (
+            <p className="mt-1 text-sm text-muted-foreground">
+              Região: {address.regiaoEntrega}
+            </p>
+          )}
+          {address.taxaEntrega && (
+            <p className="text-sm text-muted-foreground">
+              Taxa: {address.taxaEntrega}
+            </p>
+          )}
+        </div>
+
+        <div className="grid gap-3 rounded-2xl border border-border/60 bg-card/70 p-4 text-sm shadow-sm">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-rose-deep">
+            Endereço
+          </p>
+          <InfoLine label="Rua" value={address.rua || "Não informado"} />
+          <InfoLine label="Número" value={address.numero || "Não informado"} />
+          <InfoLine label="Bairro" value={address.bairro || "Não informado"} />
+          <InfoLine label="Cidade" value={address.cidade || "Não informado"} />
+        </div>
+
+        {(address.itens || address.subtotalProdutos || address.totalPedido || address.entradaMinima) && (
+          <div className="rounded-2xl border border-gold/40 bg-gradient-rose/40 p-4 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-rose-deep">
+              Resumo do carrinho
+            </p>
+
+            {address.itens && (
+              <pre className="mt-3 whitespace-pre-wrap font-sans text-sm text-muted-foreground">
+                {address.itens}
+              </pre>
+            )}
+
+            <div className="mt-3 space-y-1 border-t border-border/60 pt-3 text-sm">
+              {address.subtotalProdutos && (
+                <InfoLine label="Subtotal produtos" value={address.subtotalProdutos} />
+              )}
+              {address.totalPedido && (
+                <InfoLine label="Total do pedido" value={address.totalPedido} />
+              )}
+              {address.entradaMinima && (
+                <InfoLine label="Entrada mínima" value={address.entradaMinima} />
+              )}
+            </div>
+          </div>
+        )}
+
+        {address.observacoes && (
+          <div className="rounded-2xl border border-border/60 bg-card/70 p-4 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-rose-deep">
+              Observações completas
+            </p>
+            <pre className="mt-2 whitespace-pre-wrap font-sans text-sm leading-relaxed text-muted-foreground">
+              {address.observacoes}
+            </pre>
+          </div>
+        )}
+      </div>
+    </DialogContent>
+  );
+}
+
+function InfoLine({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex justify-between gap-4 border-b border-border/50 pb-2 last:border-0 last:pb-0">
+      <span className="text-muted-foreground">{label}</span>
+      <strong className="text-right text-foreground">{value}</strong>
+    </div>
   );
 }
 
@@ -330,6 +576,7 @@ function NovoPedidoDialog({ onDone }: { onDone: () => void }) {
       <DialogHeader>
         <DialogTitle className="font-display text-2xl">Novo pedido</DialogTitle>
       </DialogHeader>
+
       <div className="grid gap-3">
         <div className="grid gap-3 sm:grid-cols-2">
           <Field label="Cliente *">
@@ -342,6 +589,7 @@ function NovoPedidoDialog({ onDone }: { onDone: () => void }) {
               </SelectContent>
             </Select>
           </Field>
+
           <Field label="Produto *">
             <Select value={form.produtoId} onValueChange={(v) => {
               const p = produtos.find((x) => x.id === v);
@@ -413,6 +661,7 @@ function NovoPedidoDialog({ onDone }: { onDone: () => void }) {
           <Textarea rows={2} value={form.observacoes} onChange={(e) => setForm({ ...form, observacoes: e.target.value })} />
         </Field>
       </div>
+
       <DialogFooter>
         <Button
           disabled={!form.clienteId || !form.produtoId || !form.valorTotal || mut.isPending}

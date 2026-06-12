@@ -1,17 +1,14 @@
 import { r as reactExports, j as jsxRuntimeExports } from "../_libs/react.mjs";
 import { u as useQuery, b as useQueryClient, a as useMutation } from "../_libs/tanstack__react-query.mjs";
 import { u as useServerFn } from "./useServerFn-DL2oePlL.mjs";
-import { A as AppLayout } from "./app-layout-Bh3N7kPK.mjs";
-import { C as Card, c as CardContent } from "./card-Bbtrid8Y.mjs";
-import { B as Button, I as Input } from "./brand-logo-3iPsG8o9.mjs";
-import { L as Label } from "./label-tl_MnXN1.mjs";
-import { B as Badge } from "./badge-PNZ8Owsm.mjs";
-import { S as Select, a as SelectTrigger, b as SelectValue, c as SelectContent, d as SelectItem } from "./select-CmacHktB.mjs";
-import { D as Dialog, a as DialogTrigger, b as DialogContent, c as DialogHeader, d as DialogTitle, e as DialogFooter } from "./dialog-DsEyClLt.mjs";
-import { k as listFichas, b as listProdutos, m as deleteFicha, o as upsertFicha, f as listInsumos, p as listCustosAdicionais } from "./router-DrEiKWY7.mjs";
+import { A as AppLayout } from "./app-layout-CxpNs-BW.mjs";
+import { C as Card, c as CardContent } from "./card-acCiEC5p.mjs";
+import { s as listFichas, b as listProdutos, D as Dialog, k as DialogTrigger, B as Button, v as deleteFicha, w as updateFicha, e as DialogContent, f as DialogHeader, g as DialogTitle, L as Label, I as Input, T as Textarea, h as DialogFooter, x as upsertFicha, j as listInsumos, y as listCustosAdicionais } from "./router-C4tcv7sc.mjs";
+import { B as Badge } from "./badge-Do_NBdl2.mjs";
+import { S as Select, a as SelectTrigger, b as SelectValue, c as SelectContent, d as SelectItem } from "./select-DaYoE1iY.mjs";
 import { t as toast } from "../_libs/sonner.mjs";
 import "../_libs/seroval.mjs";
-import { i as ChefHat, c as Plus, T as Trash2, L as LoaderCircle } from "../_libs/lucide-react.mjs";
+import { i as ChefHat, c as Plus, d as Pencil, T as Trash2, L as LoaderCircle } from "../_libs/lucide-react.mjs";
 import "../_libs/tanstack__query-core.mjs";
 import "../_libs/tanstack__react-router.mjs";
 import "../_libs/tanstack__router-core.mjs";
@@ -62,19 +59,15 @@ import "../_libs/floating-ui__utils.mjs";
 import "../_libs/radix-ui__react-arrow.mjs";
 import "../_libs/radix-ui__react-use-size.mjs";
 import "../_libs/@radix-ui/react-visually-hidden+[...].mjs";
-import "./nexo-signature-6kPfTCBv.mjs";
-import "../_libs/tailwind-merge.mjs";
-import "../_libs/radix-ui__react-label.mjs";
-import "../_libs/radix-ui__react-select.mjs";
-import "../_libs/radix-ui__number.mjs";
-import "../_libs/radix-ui__react-collection.mjs";
-import "../_libs/radix-ui__react-direction.mjs";
-import "../_libs/radix-ui__react-use-previous.mjs";
-import "./server-BK6vLts3.mjs";
+import "./brand-logo-C_BRZq5w.mjs";
+import "./nexo-signature-XrLnPLze.mjs";
+import "./server-DoEYPU5W.mjs";
 import "node:async_hooks";
 import "../_libs/h3-v2.mjs";
 import "../_libs/rou3.mjs";
 import "../_libs/srvx.mjs";
+import "../_libs/tailwind-merge.mjs";
+import "../_libs/radix-ui__react-label.mjs";
 import "../_libs/supabase__supabase-js.mjs";
 import "../_libs/supabase__postgrest-js.mjs";
 import "../_libs/supabase__realtime-js.mjs";
@@ -85,6 +78,27 @@ import "../_libs/supabase__auth-js.mjs";
 import "../_libs/supabase__functions-js.mjs";
 import "./sheets.server-OHrRPQqp.mjs";
 import "../_libs/zod.mjs";
+import "../_libs/radix-ui__react-select.mjs";
+import "../_libs/radix-ui__number.mjs";
+import "../_libs/radix-ui__react-collection.mjs";
+import "../_libs/radix-ui__react-direction.mjs";
+import "../_libs/radix-ui__react-use-previous.mjs";
+function currencyInputToNumber(value) {
+  const onlyNumbers = String(value || "").replace(/\D/g, "");
+  return Number(onlyNumbers || 0) / 100;
+}
+function formatCurrencyInput(value) {
+  return currencyInputToNumber(value).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL"
+  });
+}
+function numberToCurrencyInput(value) {
+  return Number(value || 0).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL"
+  });
+}
 function parseMoney(value) {
   if (value === void 0 || value === null) return 0;
   if (typeof value === "number") return value;
@@ -123,6 +137,16 @@ function FichaCard({
   ficha
 }) {
   const remove = useServerFn(deleteFicha);
+  const updateFichaFn = useServerFn(updateFicha);
+  const [editOpen, setEditOpen] = reactExports.useState(false);
+  const [editForm, setEditForm] = reactExports.useState({
+    produtoId: ficha.produtoId,
+    produtoNome: ficha.produtoNome,
+    ingredientes: ficha.ingredientes,
+    custoTotal: numberToCurrencyInput(Number(ficha.custoTotal)),
+    precoVenda: numberToCurrencyInput(Number(ficha.precoVenda)),
+    observacoes: ficha.observacoes || ""
+  });
   const qc = useQueryClient();
   const margem = Number(ficha.margem) || 0;
   const cor = margem >= 50 ? "bg-success/15 text-success" : margem >= 25 ? "bg-warning/20 text-warning" : "bg-destructive/15 text-destructive";
@@ -136,6 +160,56 @@ function FichaCard({
         /* @__PURE__ */ jsxRuntimeExports.jsxs(Badge, { className: cor, children: [
           margem.toFixed(1),
           "% margem"
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(Dialog, { open: editOpen, onOpenChange: setEditOpen, children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(DialogTrigger, { asChild: true, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { variant: "ghost", size: "icon", className: "h-8 w-8 text-blue-500 hover:text-blue-600", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Pencil, { className: "h-4 w-4" }) }) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(DialogContent, { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(DialogHeader, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(DialogTitle, { children: "Editar Ficha Técnica" }) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid gap-3", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { children: "Produto" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx(Input, { value: editForm.produtoNome, disabled: true, className: "bg-muted" })
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { children: "Ingredientes" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx(Textarea, { rows: 5, value: editForm.ingredientes, onChange: (e) => setEditForm({
+                  ...editForm,
+                  ingredientes: e.target.value
+                }) })
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { children: "Custo total" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx(Input, { inputMode: "numeric", value: editForm.custoTotal, onChange: (e) => setEditForm({
+                  ...editForm,
+                  custoTotal: formatCurrencyInput(e.target.value)
+                }) })
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { children: "Preço de venda" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx(Input, { inputMode: "numeric", value: editForm.precoVenda, onChange: (e) => setEditForm({
+                  ...editForm,
+                  precoVenda: formatCurrencyInput(e.target.value)
+                }) })
+              ] })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(DialogFooter, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { className: "bg-gradient-primary", onClick: () => updateFichaFn({
+              data: {
+                id: ficha.id,
+                produtoId: editForm.produtoId,
+                produtoNome: editForm.produtoNome,
+                ingredientes: editForm.ingredientes,
+                custoTotal: currencyInputToNumber(editForm.custoTotal),
+                precoVenda: currencyInputToNumber(editForm.precoVenda),
+                observacoes: editForm.observacoes
+              }
+            }).then(() => {
+              toast.success("Ficha atualizada");
+              qc.invalidateQueries({
+                queryKey: ["fichas"]
+              });
+              setEditOpen(false);
+            }), children: "Salvar alterações" }) })
+          ] })
         ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { variant: "ghost", size: "icon", className: "h-8 w-8 text-red-500 hover:text-red-600", onClick: async () => {
           if (!confirm(`Excluir ficha "${ficha.produtoNome}"?`)) return;
@@ -188,13 +262,13 @@ function FichaDialog({
   const [form, setForm] = reactExports.useState({
     produtoId: "",
     ingredientes: "",
-    custoTotal: 0,
-    precoVenda: 0,
+    custoTotal: "",
+    precoVenda: "",
     observacoes: ""
   });
   const [novoInsumo, setNovoInsumo] = reactExports.useState({
     insumoId: "",
-    quantidade: 1
+    quantidade: ""
   });
   const produto = produtos.find((p) => p.id === form.produtoId);
   const ingredientesSelecionados = form.ingredientes.split("\n").map((linha) => linha.trim()).filter(Boolean);
@@ -220,7 +294,7 @@ function FichaDialog({
       toast.error("Selecione um insumo");
       return;
     }
-    const quantidade = Number(novoInsumo.quantidade) || 1;
+    const quantidade = novoInsumo.quantidade === "" ? 1 : Number(novoInsumo.quantidade);
     const linha = `${insumo.nome} ${quantidade}`;
     setForm({
       ...form,
@@ -228,7 +302,7 @@ function FichaDialog({
     });
     setNovoInsumo({
       insumoId: "",
-      quantidade: 1
+      quantidade: ""
     });
   }
   function removerIngrediente(index) {
@@ -241,16 +315,18 @@ function FichaDialog({
   const custoIngredientes = calcularCustoIngredientes();
   const custoAdicional = custosAdicionais.reduce((acc, c) => acc + parseMoney(c.valor), 0);
   const custoCalculado = custoIngredientes + custoAdicional;
-  const lucro = form.precoVenda - form.custoTotal;
-  const margem = form.precoVenda > 0 ? lucro / form.precoVenda * 100 : 0;
+  const custoTotalNumber = currencyInputToNumber(form.custoTotal);
+  const precoVendaNumber = currencyInputToNumber(form.precoVenda);
+  const lucro = precoVendaNumber - custoTotalNumber;
+  const margem = precoVendaNumber > 0 ? lucro / precoVendaNumber * 100 : 0;
   const mut = useMutation({
     mutationFn: () => upsert({
       data: {
         produtoId: form.produtoId,
         produtoNome: produto ? `${produto.categoria} • ${produto.nome}` : "",
         ingredientes: form.ingredientes,
-        custoTotal: form.custoTotal,
-        precoVenda: form.precoVenda,
+        custoTotal: custoTotalNumber,
+        precoVenda: precoVendaNumber,
         observacoes: form.observacoes
       }
     }),
@@ -273,7 +349,7 @@ function FichaDialog({
           setForm({
             ...form,
             produtoId: v,
-            precoVenda: p ? Number(String(p.preco).replace(",", ".")) : 0
+            precoVenda: p ? numberToCurrencyInput(Number(String(p.preco).replace(",", "."))) : ""
           });
         }, children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(SelectTrigger, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(SelectValue, { placeholder: "Selecione" }) }),
@@ -302,7 +378,7 @@ function FichaDialog({
           ] }),
           /* @__PURE__ */ jsxRuntimeExports.jsx(Input, { type: "number", min: 0.01, step: "0.01", value: novoInsumo.quantidade, onChange: (e) => setNovoInsumo({
             ...novoInsumo,
-            quantidade: Number(e.target.value) || 1
+            quantidade: e.target.value
           }) }),
           /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { type: "button", onClick: adicionarInsumo, className: "bg-gradient-primary", children: "Adicionar" })
         ] }),
@@ -336,21 +412,21 @@ function FichaDialog({
       ] }),
       /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { type: "button", variant: "outline", onClick: () => setForm({
         ...form,
-        custoTotal: Number(custoCalculado.toFixed(2))
+        custoTotal: numberToCurrencyInput(Number(custoCalculado.toFixed(2)))
       }), children: "Usar custo calculado" }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-2 gap-3", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { children: "Custo total editável (R$)" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(Input, { type: "number", step: "0.01", value: form.custoTotal, onChange: (e) => setForm({
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Input, { inputMode: "numeric", placeholder: "R$ 0,00", value: form.custoTotal, onChange: (e) => setForm({
             ...form,
-            custoTotal: +e.target.value
+            custoTotal: formatCurrencyInput(e.target.value)
           }) })
         ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { children: "Preço de venda (R$)" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(Input, { type: "number", step: "0.01", value: form.precoVenda, onChange: (e) => setForm({
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Input, { inputMode: "numeric", placeholder: "R$ 0,00", value: form.precoVenda, onChange: (e) => setForm({
             ...form,
-            precoVenda: +e.target.value
+            precoVenda: formatCurrencyInput(e.target.value)
           }) })
         ] })
       ] }),
