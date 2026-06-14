@@ -554,17 +554,14 @@ export const updateInsumo = createServerFn({ method: "POST" })
     const row = await findRow("Insumos", "ID Insumo", data.id);
     if (row < 0) throw new Error("Insumo não encontrado");
 
-    await updateRecord("Insumos", row, {
-      Nome: data.nome,
-      Unidade: data.unidade,
-      "Valor Unitario": data.valorUnitario,
-      "Valor Unitário": data.valorUnitario,
-      "Estoque Atual": data.estoqueAtual,
-      "Estoque Minimo": data.estoqueMinimo,
-      "Estoque Mínimo": data.estoqueMinimo,
-      Observacoes: data.observacoes,
-      Observações: data.observacoes,
-    });
+await updateRecord("Insumos", row, {
+  Insumo: data.nome,
+  "Unidade Uso": data.unidade,
+  "Custo Unitario": data.valorUnitario,
+  "Estoque Atual": data.estoqueAtual,
+  "Estoque Minimo": data.estoqueMinimo,
+  Observacoes: data.observacoes,
+});
 
     return { ok: true };
   });

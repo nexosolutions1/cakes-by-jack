@@ -99,6 +99,13 @@ function FichaPage() {
     queryKey: ["produtos"],
     queryFn: () => listProdutos(),
   });
+  
+const { data: insumos = [] } = useQuery({
+  queryKey: ["insumos"],
+  queryFn: () => listInsumos(),
+});
+
+(window as any).__INSUMOS_FICHA__ = insumos;
 
   const [open, setOpen] = useState(false);
 
@@ -151,6 +158,36 @@ const [editForm, setEditForm] = useState({
   observacoes: ficha.observacoes || "",
 });
 const qc = useQueryClient();
+
+function calcularCustoEditado() {
+  const linhas = editForm.ingredientes
+    .split("\n")
+    .map((linha) => linha.trim())
+    .filter(Boolean);
+
+  let total = 0;
+
+  for (const linha of linhas) {
+    const qtdMatch = linha.match(/(\d+[,.]?\d*)\s*$/);
+    const quantidade = qtdMatch ? Number(qtdMatch[1].replace(",", ".")) : 1;
+
+    const nomeLinha = normalizeText(
+      linha.replace(/(\d+[,.]?\d*)\s*$/, "").trim(),
+    );
+
+    const insumo = (window as any).__INSUMOS_FICHA__?.find((i: any) => {
+      const nomeInsumo = normalizeText(i.nome);
+      return nomeLinha.includes(nomeInsumo) || nomeInsumo.includes(nomeLinha);
+    });
+
+    if (insumo) {
+      total += quantidade * parseMoney(insumo.valorUnitario);
+    }
+  }
+
+  return total;
+}
+
   const margem = Number(ficha.margem) || 0;
 
   const cor =
@@ -217,33 +254,38 @@ const qc = useQueryClient();
           />
         </div>
 
-        <div>
-          <Label>Custo total</Label>
-          <Input
-            inputMode="numeric"
-            value={editForm.custoTotal}
-            onChange={(e) =>
-              setEditForm({
-                ...editForm,
-                custoTotal: formatCurrencyInput(e.target.value),
-              })
-            }
-          />
-        </div>
+<div className="flex justify-end">
+  <Button
+    type="button"
+    variant="outline"
+    onClick={() => {
+      const novoCusto = calcularCustoEditado();
 
-        <div>
-          <Label>Preço de venda</Label>
-          <Input
-            inputMode="numeric"
-            value={editForm.precoVenda}
-            onChange={(e) =>
-              setEditForm({
-                ...editForm,
-                precoVenda: formatCurrencyInput(e.target.value),
-              })
-            }
-          />
-        </div>
+      setEditForm({
+        ...editForm,
+        custoTotal: numberToCurrencyInput(novoCusto),
+      });
+
+      toast.success("Custo recalculado");
+    }}
+  >
+    Recalcular custo pelos ingredientes
+  </Button>
+</div>
+
+<div>
+  <Label>Custo total</Label>
+  <Input
+    inputMode="numeric"
+    value={editForm.custoTotal}
+    onChange={(e) =>
+      setEditForm({
+        ...editForm,
+        custoTotal: formatCurrencyInput(e.target.value),
+      })
+    }
+  />
+</div>
       </div>
 
       <DialogFooter>
